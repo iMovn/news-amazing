@@ -1,7 +1,5 @@
-export default function MyAdmin() {
-  return (
-    <>
-      <h1>Dashboard</h1>
-    </>
-  );
+export default function AdminPage() {
+    return (
+        <h1>admin</h1>
+    )
 }
