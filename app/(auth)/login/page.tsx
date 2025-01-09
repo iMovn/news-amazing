@@ -53,14 +53,19 @@ const LoginPage = () => {
 
       message.success("Login successful!");
       router.push("/admin"); // Redirect to admin page after login
-    } catch (error: any) {
-      message.error(
-        error?.message || "Login failed. Please try again." // Error handling improvement
-      );
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle known errors with type safety
+        message.error(error.message || "Login failed. Please try again.");
+      } else {
+        // Handle unknown errors
+        message.error("An unknown error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
