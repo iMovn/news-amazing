@@ -1,13 +1,7 @@
 export default function SiteLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  return (
-    <html lang="vi">
-      <body className="antialiased">
-        {children}
-      </body>
-    </html>
-  );
+}>) {
+  return <>{children}</>;
 }
