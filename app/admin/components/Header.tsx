@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 
 interface HeaderProps {
   toggleSidebar: () => void;
-  isSidebarOpen: boolean; // Thêm trạng thái mở/đóng sidebar
+  isSidebarOpen?: boolean; // Thêm trạng thái mở/đóng sidebar
 }
 
 export default function Header({ toggleSidebar, isSidebarOpen }: HeaderProps) {
