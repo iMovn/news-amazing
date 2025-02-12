@@ -23,11 +23,11 @@ export default function PostInsert() {
     useEffect(() => {
         const loadCategories = async () => {
             const data = await fetchCategories();
-            console.log(data);
-            
-            setCategories(data);
+            console.log(data?.data);
+
+            setCategories(data?.data);
             if (data.length > 0) {
-                setPost((prev) => ({ ...prev, category: data[0] })); // Set category mặc định
+                setPost((prev) => ({ ...prev, category: data[0] }));
             }
         };
         loadCategories();
@@ -115,13 +115,17 @@ export default function PostInsert() {
                     />
                 </div>
 
-                <select name="category" value={post.category?.id || ""} onChange={handleCategoryChange}>
-                    {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                    </option>
-                    ))}
-                </select>
+                <div>
+                    <label className="block text-sm font-medium mb-1">Nội dung</label>
+                    <select name="category" className="w-full border rounded-lg p-2" value={post.category?.id || ""} onChange={handleCategoryChange}>
+                        <option value="">Chọn Danh Mục</option>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 {/* Status Toggle */}
                 <div>
