@@ -11,9 +11,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+// import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
+import Link from "next/link";
 
 // Định nghĩa kiểu Post
 interface Post {
@@ -55,8 +56,8 @@ export default function PostManagement() {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingPost, setEditingPost] = useState<Post | null>(null);
+    // const [isDialogOpen, setIsDialogOpen] = useState(false);
+    // const [editingPost, setEditingPost] = useState<Post | null>(null);
 
     const filteredPosts = posts.filter((post) =>
         post.name.toLowerCase().includes(search.toLowerCase())
@@ -69,28 +70,28 @@ export default function PostManagement() {
 
     const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
 
-    const handleEdit = (post: Post) => {
-        setEditingPost(post);
-        setIsDialogOpen(true);
-    };
+    // const handleEdit = (post: Post) => {
+        // setEditingPost(post);
+        // setIsDialogOpen(true);
+    // };
 
     const handleDelete = (slug: string) => {
         setPosts(posts.filter((post) => post.slug !== slug));
     };
 
-    const handleAddOrUpdate = (newPost: Post) => {
-        if (editingPost) {
-            setPosts(
-                posts.map((p) =>
-                    p.slug === editingPost.slug ? newPost : p
-                )
-            );
-        } else {
-            setPosts([...posts, newPost]);
-        }
-        setIsDialogOpen(false);
-        setEditingPost(null);
-    };
+    // const handleAddOrUpdate = (newPost: Post) => {
+    //     if (editingPost) {
+    //         setPosts(
+    //             posts.map((p) =>
+    //                 p.slug === editingPost.slug ? newPost : p
+    //             )
+    //         );
+    //     } else {
+    //         setPosts([...posts, newPost]);
+    //     }
+    //     setIsDialogOpen(false);
+    //     setEditingPost(null);
+    // };
 
     return (
         <div className="space-y-6">
@@ -102,7 +103,15 @@ export default function PostManagement() {
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-1/3"
                 />
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <Link href={'post/insert'}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                    >
+                        Thêm mới
+                    </Button>
+                </Link>
+                {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button onClick={() => setEditingPost(null)}>Thêm mới</Button>
                     </DialogTrigger>
@@ -172,7 +181,7 @@ export default function PostManagement() {
                             </div>
                         </form>
                     </DialogContent>
-                </Dialog>
+                </Dialog> */}
             </div>
 
             {/* Bảng bài viết */}
@@ -207,7 +216,7 @@ export default function PostManagement() {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleEdit(post)}
+                                            // onClick={() => handleEdit(post)}
                                         >
                                             Sửa
                                         </Button>

@@ -41,20 +41,13 @@ export default function AdminLayout({
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Header */}
       <Header toggleSidebar={toggleSidebar} />
-
-      {/* Content Area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
+      <div className="flex flex-1">
         {isSidebarOpen && <Sidebar />}
-
-        {/* Main Content */}
         <div className="flex flex-col flex-1">
           <main className="flex-1 p-4 overflow-hidden bg-white">
             {children}
           </main>
-          {/* Footer */}
           <Footer />
         </div>
       </div>
