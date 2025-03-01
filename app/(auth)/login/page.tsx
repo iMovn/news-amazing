@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-import { loginApi } from "@/services/authService";
+import { loginApi } from "@/app/admin/services/authService";
 import Image from "next/image";
 
 type LoginFormInputs = {
@@ -26,18 +26,20 @@ const LoginPage = () => {
   } = useForm<LoginFormInputs>();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (credentials) => {
-    setIsLoading(true); // Bắt đầu loading
+    setIsLoading(true);
     try {
       const response = await loginApi(credentials);
-      const { token, user } = response.data;
+      // console.log("Response Data:", response);
+      const { token, user } = response; // Không cần `.data` nữa
 
       if (!token) throw new Error("Invalid token from server.");
 
       // Lưu vào localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+
       // Điều hướng đến admin
-      router.push("/admin");
+      router.push("/admin/dashboard");
     } catch (error) {
       console.error("Login error:", error);
 
@@ -47,7 +49,7 @@ const LoginPage = () => {
         message: "Email hoặc mật khẩu không đúng",
       });
     } finally {
-      setIsLoading(false); // Kết thúc loading
+      setIsLoading(false);
     }
   };
 
@@ -141,6 +143,7 @@ const LoginPage = () => {
 
           {/* Submit Button */}
           <Button
+            variant={"i_btn"}
             type="submit"
             className={`w-full mt-10 flex justify-center items-center text-white font-bold text-base ${
               isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500"

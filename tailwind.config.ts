@@ -24,6 +24,7 @@ const config: Config = {
 				primary: '#0C4476',
 				secondary: '#3D91A0',
 				thirdary: '#E56427',
+				border: "#E5E7EB",
 			},
 		},
 	},

@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "./components/Header";
@@ -11,41 +12,37 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Kiểm tra quyền truy cập
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
-      // Điều hướng về trang đăng nhập nếu không có token
       router.push("/login");
     } else {
-      setIsLoading(false); // Dừng loading nếu có token
+      setIsLoading(false);
     }
   }, [router]);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   if (isLoading) {
-    // Hiển thị màn hình loading
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        <p>Loading...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col h-screen">
-      <Header toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1">
-        {isSidebarOpen && <Sidebar />}
-        <div className="flex flex-col flex-1">
-          <main className="flex-1 p-4 overflow-hidden bg-white">
+      <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar isSidebarOpen={isSidebarOpen} />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <main className="flex-1 p-4 overflow-y-auto bg-gray-50">
             {children}
           </main>
           <Footer />
