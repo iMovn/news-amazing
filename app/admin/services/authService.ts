@@ -1,15 +1,5 @@
 import axiosInstance from "@/lib/axiosInstance";
-import axios from "axios";
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
+import { isAxiosError  } from "axios";
 interface LoginResponse {
     message: string;
     user: {
@@ -35,12 +25,16 @@ export const loginApi = async (credentials: LoginRequest): Promise<LoginResponse
       const response = await axiosInstance.post<LoginResponse>("/login", credentials);
     //   console.log("API Response:", response.data); // Log toàn bộ response
       return response.data; // Trả về đúng dữ liệu từ API
-    } catch (error: any) {
+    } catch(error: unknown) {
       console.error("Login API Error:", error);
   
-      if (error.response) {
-        console.error("Response Data:", error.response.data);
-        console.error("Status Code:", error.response.status);
+      if (error instanceof Error) {
+        console.error("Error Message:", error.message);
+      }
+
+      if (isAxiosError(error)) {
+        console.error("Response Data:", error.response?.data);
+        console.error("Status Code:", error.response?.status);
       }
   
       throw new Error("Không thể kết nối đến API.");

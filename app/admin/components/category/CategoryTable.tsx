@@ -19,7 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,10 +43,10 @@ import { useCategoryTable } from "../../hooks/category/useCategoryTable";
 import { useMemo, useState } from "react";
 import { Category } from "../../types/category";
 import {
-  fetchCategories,
   deleteCategory,
   updateCategoryStatus,
 } from "../../services/categoryService";
+import { AlertCircle } from "lucide-react";
 
 export const CategoryTable = () => {
   const {
@@ -59,7 +58,6 @@ export const CategoryTable = () => {
     setStatusFilter,
     createdAtFilter,
     setCreatedAtFilter,
-    selectedCategory,
     setSelectedCategory,
     isDeleting,
     handleDelete,
@@ -68,6 +66,10 @@ export const CategoryTable = () => {
 
   const [isDeletingSelected, setIsDeletingSelected] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [isActivateAlertOpen, setIsActivateAlertOpen] = useState(false);
+  const [isDeactivateAlertOpen, setIsDeactivateAlertOpen] = useState(false);
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
   // Xóa nhiều danh mục
   const handleDeleteSelected = async () => {
@@ -86,10 +88,11 @@ export const CategoryTable = () => {
       setCategories((prev) =>
         prev.filter((cat) => !selectedIds.includes(cat.id))
       );
-    } catch (error) {
+    } catch {
       setError("Xóa danh mục thất bại");
     } finally {
       setIsDeletingSelected(false);
+      setIsDeleteAlertOpen(false); // Đóng popup sau khi hoàn thành
       table.resetRowSelection(); // Bỏ chọn tất cả các hàng
     }
   };
@@ -115,10 +118,13 @@ export const CategoryTable = () => {
           selectedIds.includes(cat.id) ? { ...cat, is_active: isActive } : cat
         )
       );
-    } catch (error) {
+    } catch {
       setError("Cập nhật trạng thái thất bại");
     } finally {
       setIsUpdatingStatus(false);
+      // Đóng popup tương ứng
+      if (isActive === 1) setIsActivateAlertOpen(false);
+      if (isActive === 0) setIsDeactivateAlertOpen(false);
       table.resetRowSelection(); // Bỏ chọn tất cả các hàng
     }
   };
@@ -191,17 +197,21 @@ export const CategoryTable = () => {
             <Button size="sm" variant="outline">
               Sửa
             </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => setSelectedCategory(row.original)}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? "Đang xóa..." : "Xóa"}
-                </Button>
-              </AlertDialogTrigger>
+            <AlertDialog
+              open={isAlertDialogOpen}
+              onOpenChange={setIsAlertDialogOpen}
+            >
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => {
+                  setSelectedCategory(row.original); // Lưu danh mục được chọn
+                  setIsAlertDialogOpen(true); // Mở AlertDialog
+                }}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Đang xóa..." : "Xóa"}
+              </Button>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
@@ -213,7 +223,10 @@ export const CategoryTable = () => {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Hủy</AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={handleDelete}
+                    onClick={() => {
+                      handleDelete(); // Xử lý xóa
+                      setIsAlertDialogOpen(false); // Đóng AlertDialog sau khi xóa
+                    }}
                     disabled={isDeleting}
                   >
                     {isDeleting ? "Đang xử lý..." : "Xác nhận"}
@@ -225,7 +238,7 @@ export const CategoryTable = () => {
         ),
       },
     ],
-    [isDeleting, setSelectedCategory, handleDelete]
+    [isAlertDialogOpen, isDeleting, setSelectedCategory, handleDelete]
   );
 
   // Sử dụng useReactTable với phân trang
@@ -252,6 +265,13 @@ export const CategoryTable = () => {
       {/* Nội dung chính bên phải */}
       <div className="flex-1 p-4">
         <h2 className="text-xl font-bold mb-4">Danh sách danh mục</h2>
+        {/* Hiển thị lỗi */}
+        {error && (
+          <div className="flex items-center gap-2 text-red-500">
+            <AlertCircle className="w-5 h-5" />
+            <span>{error}</span>
+          </div>
+        )}
         {/* Các nút hành động */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -273,33 +293,113 @@ export const CategoryTable = () => {
             <span className="text-sm text-gray-600">danh mục</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="destructive"
-              onClick={handleDeleteSelected}
-              disabled={
-                !table.getSelectedRowModel().rows.length || isDeletingSelected
-              }
+            {/* AlertDialog cho Xóa đã chọn */}
+            <AlertDialog
+              open={isDeleteAlertOpen}
+              onOpenChange={setIsDeleteAlertOpen}
             >
-              {isDeletingSelected ? "Đang xóa..." : "Xóa đã chọn"}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleUpdateStatusSelected(1)} // 1: Hoạt động
-              disabled={
-                !table.getSelectedRowModel().rows.length || isUpdatingStatus
-              }
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  onClick={() => setIsDeleteAlertOpen(true)}
+                  disabled={
+                    !table.getSelectedRowModel().rows.length ||
+                    isDeletingSelected
+                  }
+                >
+                  {isDeletingSelected ? "Đang xóa..." : "Xóa đã chọn"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Hành động này sẽ xóa vĩnh viễn các danh mục đã chọn và không
+                    thể hoàn tác.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteSelected}
+                    disabled={isDeletingSelected}
+                  >
+                    {isDeletingSelected ? "Đang xóa..." : "Xác nhận"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            {/* AlertDialog cho Kích hoạt */}
+            <AlertDialog
+              open={isActivateAlertOpen}
+              onOpenChange={setIsActivateAlertOpen}
             >
-              {isUpdatingStatus ? "Đang cập nhật..." : "Kích hoạt"}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleUpdateStatusSelected(0)} // 0: Không hoạt động
-              disabled={
-                !table.getSelectedRowModel().rows.length || isUpdatingStatus
-              }
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsActivateAlertOpen(true)}
+                  disabled={
+                    !table.getSelectedRowModel().rows.length || isUpdatingStatus
+                  }
+                >
+                  {isUpdatingStatus ? "Đang cập nhật..." : "Kích hoạt"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Hành động này sẽ kích hoạt các danh mục đã chọn.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleUpdateStatusSelected(1)}
+                    disabled={isUpdatingStatus}
+                  >
+                    {isUpdatingStatus ? "Đang cập nhật..." : "Xác nhận"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            {/* AlertDialog cho Vô hiệu hóa */}
+            <AlertDialog
+              open={isDeactivateAlertOpen}
+              onOpenChange={setIsDeactivateAlertOpen}
             >
-              {isUpdatingStatus ? "Đang cập nhật..." : "Vô hiệu hóa"}
-            </Button>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeactivateAlertOpen(true)}
+                  disabled={
+                    !table.getSelectedRowModel().rows.length || isUpdatingStatus
+                  }
+                >
+                  {isUpdatingStatus ? "Đang cập nhật..." : "Vô hiệu hóa"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Hành động này sẽ vô hiệu hóa các danh mục đã chọn.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleUpdateStatusSelected(0)}
+                    disabled={isUpdatingStatus}
+                  >
+                    {isUpdatingStatus ? "Đang cập nhật..." : "Xác nhận"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <Button asChild variant={"i_btn"}>
               <Link href="/admin/category/add">Thêm mới</Link>
             </Button>
@@ -307,11 +407,6 @@ export const CategoryTable = () => {
         </div>
         {loading ? (
           <Skeleton className="h-40 w-full rounded-md" />
-        ) : error ? (
-          <div className="flex items-center gap-2 text-red-500">
-            <AlertCircle className="w-5 h-5" />
-            {error}
-          </div>
         ) : (
           <>
             {/* Bảng danh mục */}

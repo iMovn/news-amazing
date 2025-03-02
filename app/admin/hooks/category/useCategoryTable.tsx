@@ -31,7 +31,7 @@ export const useCategoryTable = () => {
       } else {
         setError("Xóa danh mục thất bại");
       }
-    } catch (error) {
+    } catch {
       setError("Lỗi khi xóa danh mục");
     } finally {
       setIsDeleting(false);
@@ -49,7 +49,7 @@ export const useCategoryTable = () => {
         } else {
           throw new Error(response.message || "Dữ liệu trả về không hợp lệ");
         }
-      } catch (err) {
+      } catch {
         setError("Lỗi khi tải dữ liệu danh mục");
       } finally {
         setLoading(false);
