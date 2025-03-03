@@ -1,5 +1,11 @@
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export const CategoryFilters = ({
   statusFilter,
@@ -15,8 +21,8 @@ export const CategoryFilters = ({
   onSearch: (value: string) => void;
 }) => {
   return (
-    <div className="w-64 p-4 bg-gray-50 border-r">
-      <h3 className="text-lg font-semibold mb-4">Bộ lọc</h3>
+    <div className="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4">
+      <h3 className="text-lg text-primary font-bold mb-4">Bộ lọc</h3>
       <div className="space-y-4">
         <Input
           placeholder="Tìm kiếm theo tên..."

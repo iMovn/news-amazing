@@ -37,14 +37,12 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-[#F9FAFB]">
       <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <main className="flex-1 p-4 overflow-y-auto bg-gray-50">
-            {children}
-          </main>
+          <main className="flex-1 p-4 overflow-y-auto">{children}</main>
           <Footer />
         </div>
       </div>

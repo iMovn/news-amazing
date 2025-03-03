@@ -8,4 +8,5 @@ export interface Category {
   created_at: string;
   children?: Category[];
   level: number;
+  user_id: number;
 }

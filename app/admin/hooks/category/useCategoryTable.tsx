@@ -4,6 +4,8 @@ import {
   deleteCategory,
 } from "@/app/admin/services/categoryService";
 import { Category } from "../../types/category";
+import { User } from "../../types/user";
+import { fetchUsers } from "../../services/userService";
 
 export const useCategoryTable = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -16,6 +18,8 @@ export const useCategoryTable = () => {
   // State cho các bộ lọc
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [createdAtFilter, setCreatedAtFilter] = useState<string>("");
+ // State cho users
+ const [users, setUsers] = useState<User[]>([]); // State để lưu danh sách người dùng
 
   // Hàm xóa danh mục
   const handleDelete = async () => {
@@ -55,7 +59,6 @@ export const useCategoryTable = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -105,6 +108,26 @@ export const useCategoryTable = () => {
     });
   }, [categoryTree, statusFilter, createdAtFilter]);
 
+    // Gọi API lấy danh sách users
+    // Lấy danh sách người dùng khi component được mount
+    useEffect(() => {
+      const loadUsers = async () => {
+        try {
+          const response = await fetchUsers(); // Gọi hàm fetchUsers từ services
+          if (response.status) {
+            setUsers(response.data); // Lưu danh sách người dùng vào state
+          } else {
+            setError(response.message); // Hiển thị thông báo lỗi nếu có
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách người dùng:", error);
+          setError("Lỗi khi tải danh sách người dùng");
+        }
+      };
+
+      loadUsers();
+    }, []);
+
   return {
     categories: filteredCategories,
     loading,
@@ -119,5 +142,6 @@ export const useCategoryTable = () => {
     isDeleting,
     handleDelete,
     setCategories,
+    users,
   };
 };

@@ -9,7 +9,7 @@ const getAuthHeaders = () => {
   return { Authorization: `Bearer ${token}` };
 };
 
-// API LẤY DANH MỤC (Đã Fix)
+// API LẤY DANH MỤC
 type ApiResponse = {
   status: boolean;
   message: string;

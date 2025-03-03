@@ -46,7 +46,21 @@ import {
   deleteCategory,
   updateCategoryStatus,
 } from "../../services/categoryService";
-import { AlertCircle } from "lucide-react";
+import {
+  AlertCircle,
+  BadgeCheck,
+  BadgeX,
+  CaptionsOff,
+  CircleAlert,
+  FolderPen,
+  FolderPlus,
+  ListChecks,
+  ListEnd,
+  ListTodo,
+  ListX,
+  Trash2,
+} from "lucide-react";
+import Breadcrumbs from "../Breadcrumbs";
 
 export const CategoryTable = () => {
   const {
@@ -62,6 +76,7 @@ export const CategoryTable = () => {
     isDeleting,
     handleDelete,
     setCategories,
+    users,
   } = useCategoryTable();
 
   const [isDeletingSelected, setIsDeletingSelected] = useState(false);
@@ -69,7 +84,7 @@ export const CategoryTable = () => {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [isActivateAlertOpen, setIsActivateAlertOpen] = useState(false);
   const [isDeactivateAlertOpen, setIsDeactivateAlertOpen] = useState(false);
-  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   // Xóa nhiều danh mục
   const handleDeleteSelected = async () => {
@@ -129,6 +144,11 @@ export const CategoryTable = () => {
     }
   };
 
+  // Hàm tìm thông tin người dùng dựa trên user_id
+  const getUserInfo = (userId: number) => {
+    return users.find((user) => user.id === userId);
+  };
+
   // Định nghĩa cột của bảng
   const columns: ColumnDef<Category>[] = useMemo(
     () => [
@@ -136,6 +156,8 @@ export const CategoryTable = () => {
         id: "select",
         header: ({ table }) => (
           <Checkbox
+            color="#fff"
+            className="bg-white shadow-md ml-3 rounded-[4px]"
             checked={
               table.getIsAllRowsSelected() || table.getIsSomeRowsSelected()
             }
@@ -145,6 +167,7 @@ export const CategoryTable = () => {
         ),
         cell: ({ row }) => (
           <Checkbox
+            className="border-secondary text-white ml-3 rounded-[4px]"
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Chọn danh mục"
@@ -165,21 +188,44 @@ export const CategoryTable = () => {
         },
       },
       { accessorKey: "slug", header: "Đường Dẫn" },
+
+      // {
+      //   accessorKey: "description",
+      //   header: "Mô tả",
+      //   cell: ({ row }) => row.original.description || "N/A",
+      // },
+
       {
-        accessorKey: "description",
-        header: "Mô tả",
-        cell: ({ row }) => row.original.description || "N/A",
+        accessorKey: "user_id",
+        header: "Người tạo",
+        cell: ({ row }) => {
+          const user = getUserInfo(row.original.user_id);
+          return user ? user.name : "Không xác định";
+        },
       },
+      {
+        accessorKey: "user_role",
+        header: "Vai trò",
+        cell: ({ row }) => {
+          const user = getUserInfo(row.original.user_id);
+          return user ? user.role : "Không xác định";
+        },
+      },
+
       {
         accessorKey: "is_active",
         header: "Trạng thái",
         cell: ({ row }) => (
           <span
-            className={`px-2 py-1 rounded text-white ${
-              row.original.is_active ? "bg-green-500" : "bg-gray-400"
+            className={`px-2 py-1 rounded text-whit ${
+              row.original.is_active ? "text-green-500" : "text-red-700"
             }`}
           >
-            {row.original.is_active ? "Hoạt động" : "Không hoạt động"}
+            {row.original.is_active ? (
+              <BadgeCheck color="#00848E" />
+            ) : (
+              <BadgeX color="gray" />
+            )}
           </span>
         ),
       },
@@ -194,42 +240,49 @@ export const CategoryTable = () => {
         header: "Hành động",
         cell: ({ row }) => (
           <div className="flex gap-2">
-            <Button size="sm" variant="outline">
-              Sửa
+            <Button size="sm" variant="edit_btn">
+              <FolderPen /> Sửa
             </Button>
-            <AlertDialog
-              open={isAlertDialogOpen}
-              onOpenChange={setIsAlertDialogOpen}
+
+            <Button
+              size="sm"
+              variant="dele_btb"
+              onClick={() => {
+                setSelectedCategory(row.original); // Lưu danh mục được chọn
+                setIsAlertOpen(true); // Mở AlertDialog ngay lập tức
+              }}
+              disabled={isDeleting}
             >
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={() => {
-                  setSelectedCategory(row.original); // Lưu danh mục được chọn
-                  setIsAlertDialogOpen(true); // Mở AlertDialog
-                }}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Đang xóa..." : "Xóa"}
-              </Button>
-              <AlertDialogContent>
+              <Trash2 /> {isDeleting ? "Đang xóa..." : "Xóa"}
+            </Button>
+
+            <AlertDialog
+              open={isAlertOpen} // Sử dụng state để quản lý trạng thái mở/đóng
+              onOpenChange={setIsAlertOpen} // Cập nhật state khi trạng thái thay đổi
+            >
+              <AlertDialogContent className="bg-white shadow-lg border-t-4 border-primary">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogTitle className="flex items-center gap-1 uppercase text-primary font-bold">
+                    <CircleAlert color="#E56427" />
+                    Bạn có chắc chắn?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-base text-gray-700">
                     Hành động này không thể hoàn tác. Danh mục sẽ bị xóa vĩnh
                     viễn.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                  <AlertDialogCancel className="text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 hover:text-gray-900 hover:scale-[1.02] transition-all">
+                    Hủy
+                  </AlertDialogCancel>
                   <AlertDialogAction
+                    className="text-white bg-gradient-to-br from-red-400 to-red-600 rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform"
                     onClick={() => {
                       handleDelete(); // Xử lý xóa
-                      setIsAlertDialogOpen(false); // Đóng AlertDialog sau khi xóa
                     }}
                     disabled={isDeleting}
                   >
-                    {isDeleting ? "Đang xử lý..." : "Xác nhận"}
+                    <Trash2 /> {isDeleting ? "Đang xử lý..." : "Xác nhận"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -238,7 +291,7 @@ export const CategoryTable = () => {
         ),
       },
     ],
-    [isAlertDialogOpen, isDeleting, setSelectedCategory, handleDelete]
+    [isDeleting, handleDelete, users]
   );
 
   // Sử dụng useReactTable với phân trang
@@ -252,157 +305,189 @@ export const CategoryTable = () => {
   });
 
   return (
-    <div className="flex">
+    <div className="flex justify-between gap-6">
       {/* Bộ lọc bên trái */}
-      <CategoryFilters
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        createdAtFilter={createdAtFilter}
-        setCreatedAtFilter={setCreatedAtFilter}
-        onSearch={(value) => table.getColumn("name")?.setFilterValue(value)}
-      />
+      <section>
+        <CategoryFilters
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          createdAtFilter={createdAtFilter}
+          setCreatedAtFilter={setCreatedAtFilter}
+          onSearch={(value) => table.getColumn("name")?.setFilterValue(value)}
+        />
+      </section>
 
       {/* Nội dung chính bên phải */}
-      <div className="flex-1 p-4">
-        <h2 className="text-xl font-bold mb-4">Danh sách danh mục</h2>
-        {/* Hiển thị lỗi */}
-        {error && (
-          <div className="flex items-center gap-2 text-red-500">
-            <AlertCircle className="w-5 h-5" />
-            <span>{error}</span>
-          </div>
-        )}
-        {/* Các nút hành động */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Hiển thị</span>
-            <Select
-              value={String(table.getState().pagination.pageSize)}
-              onValueChange={(value) => table.setPageSize(Number(value))}
-            >
-              <SelectTrigger className="w-20">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="30">30</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-            <span className="text-sm text-gray-600">danh mục</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* AlertDialog cho Xóa đã chọn */}
-            <AlertDialog
-              open={isDeleteAlertOpen}
-              onOpenChange={setIsDeleteAlertOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  onClick={() => setIsDeleteAlertOpen(true)}
-                  disabled={
-                    !table.getSelectedRowModel().rows.length ||
-                    isDeletingSelected
-                  }
-                >
-                  {isDeletingSelected ? "Đang xóa..." : "Xóa đã chọn"}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Hành động này sẽ xóa vĩnh viễn các danh mục đã chọn và không
-                    thể hoàn tác.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Hủy</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteSelected}
-                    disabled={isDeletingSelected}
+      <section className="flex-1">
+        <div className="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4">
+          {/* Breadcrumbs */}
+          <Breadcrumbs />
+          <h2 className="text-xl text-primary font-bold mb-4">
+            Danh sách danh mục
+          </h2>
+          {/* Hiển thị lỗi */}
+          {error && (
+            <div className="flex items-center gap-2 text-red-500">
+              <AlertCircle className="w-5 h-5" />
+              <span>{error}</span>
+            </div>
+          )}
+          {/* Các nút hành động */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Hiển thị</span>
+              <Select
+                value={String(table.getState().pagination.pageSize)}
+                onValueChange={(value) => table.setPageSize(Number(value))}
+              >
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="30">30</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-600">danh mục</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* AlertDialog cho Xóa đã chọn */}
+              <AlertDialog
+                open={isDeleteAlertOpen}
+                onOpenChange={setIsDeleteAlertOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsDeleteAlertOpen(true)}
+                    disabled={
+                      !table.getSelectedRowModel().rows.length ||
+                      isDeletingSelected
+                    }
                   >
-                    {isDeletingSelected ? "Đang xóa..." : "Xác nhận"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    {isDeletingSelected ? "Đang xóa..." : <ListEnd />}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white shadow-lg border-t-4 border-thirdary">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-1 uppercase text-primary font-bold">
+                      <CircleAlert color="#E56427" /> Bạn có chắc chắn?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-base text-gray-700">
+                      Hành động này sẽ xóa vĩnh viễn các danh mục đã chọn và
+                      không thể hoàn tác.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 hover:text-gray-900 hover:scale-[1.02] transition-all">
+                      Hủy
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="text-white bg-gradient-to-br from-red-400 to-red-600 rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform"
+                      onClick={handleDeleteSelected}
+                      disabled={isDeletingSelected}
+                    >
+                      <Trash2 />{" "}
+                      {isDeletingSelected ? "Đang xóa..." : "Xác nhận"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            {/* AlertDialog cho Kích hoạt */}
-            <AlertDialog
-              open={isActivateAlertOpen}
-              onOpenChange={setIsActivateAlertOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsActivateAlertOpen(true)}
-                  disabled={
-                    !table.getSelectedRowModel().rows.length || isUpdatingStatus
-                  }
-                >
-                  {isUpdatingStatus ? "Đang cập nhật..." : "Kích hoạt"}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Hành động này sẽ kích hoạt các danh mục đã chọn.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Hủy</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleUpdateStatusSelected(1)}
-                    disabled={isUpdatingStatus}
+              {/* AlertDialog cho Kích hoạt */}
+              <AlertDialog
+                open={isActivateAlertOpen}
+                onOpenChange={setIsActivateAlertOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsActivateAlertOpen(true)}
+                    disabled={
+                      !table.getSelectedRowModel().rows.length ||
+                      isUpdatingStatus
+                    }
                   >
-                    {isUpdatingStatus ? "Đang cập nhật..." : "Xác nhận"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    {isUpdatingStatus ? "Đang cập nhật..." : <ListTodo />}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white shadow-lg border-t-4 border-secondary">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-1 uppercase text-primary font-bold">
+                      <CircleAlert color="#E56427" />
+                      Bạn có chắc chắn?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-base text-gray-700">
+                      Hành động này sẽ kích hoạt các danh mục đã chọn.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 hover:text-gray-900 hover:scale-[1.02] transition-all">
+                      Hủy
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="text-white bg-gradient-to-br from-secondary to-primary rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform"
+                      onClick={() => handleUpdateStatusSelected(1)}
+                      disabled={isUpdatingStatus}
+                    >
+                      <ListChecks />
+                      {isUpdatingStatus ? "Đang cập nhật..." : "Xác nhận"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            {/* AlertDialog cho Vô hiệu hóa */}
-            <AlertDialog
-              open={isDeactivateAlertOpen}
-              onOpenChange={setIsDeactivateAlertOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsDeactivateAlertOpen(true)}
-                  disabled={
-                    !table.getSelectedRowModel().rows.length || isUpdatingStatus
-                  }
-                >
-                  {isUpdatingStatus ? "Đang cập nhật..." : "Vô hiệu hóa"}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Hành động này sẽ vô hiệu hóa các danh mục đã chọn.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Hủy</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleUpdateStatusSelected(0)}
-                    disabled={isUpdatingStatus}
+              {/* AlertDialog cho Vô hiệu hóa */}
+              <AlertDialog
+                open={isDeactivateAlertOpen}
+                onOpenChange={setIsDeactivateAlertOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsDeactivateAlertOpen(true)}
+                    disabled={
+                      !table.getSelectedRowModel().rows.length ||
+                      isUpdatingStatus
+                    }
                   >
-                    {isUpdatingStatus ? "Đang cập nhật..." : "Xác nhận"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    {isUpdatingStatus ? "Đang cập nhật..." : <ListX />}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white shadow-lg border-t-4 border-thirdary">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-1 uppercase text-primary font-bold">
+                      <CircleAlert color="#E56427" />
+                      Bạn có chắc chắn?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-base text-gray-700">
+                      Hành động này sẽ vô hiệu hóa các danh mục đã chọn.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 hover:text-gray-900 hover:scale-[1.02] transition-all">
+                      Hủy
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="text-white bg-gradient-to-br from-gray-400 to-gray-800 rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform"
+                      onClick={() => handleUpdateStatusSelected(0)}
+                      disabled={isUpdatingStatus}
+                    >
+                      <CaptionsOff />{" "}
+                      {isUpdatingStatus ? "Đang cập nhật..." : "Xác nhận"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            <Button asChild variant={"i_btn"}>
-              <Link href="/admin/category/add">Thêm mới</Link>
-            </Button>
+              <Button asChild variant="new_btn">
+                <Link href="/admin/category/add">
+                  <FolderPlus /> Thêm mới
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
         {loading ? (
@@ -410,8 +495,8 @@ export const CategoryTable = () => {
         ) : (
           <>
             {/* Bảng danh mục */}
-            <Table>
-              <TableHeader>
+            <Table className="bg-white shadow-lg shadow-gray-200 rounded-2xl my-6">
+              <TableHeader className="text-white bg-gradient-to-br from-primary to-secondary uppercase text-xs">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -427,9 +512,12 @@ export const CategoryTable = () => {
               </TableHeader>
               <TableBody>
                 {table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="hover:bg-gray-100">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        className="py-0 text-sm text-gray-600"
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -472,7 +560,7 @@ export const CategoryTable = () => {
             </div>
           </>
         )}
-      </div>
+      </section>
     </div>
   );
 };
