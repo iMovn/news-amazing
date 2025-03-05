@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Mulish, Playfair_Display } from "next/font/google";
+import { Mulish, Playfair_Display, Roboto } from "next/font/google";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -15,6 +15,13 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${mulish.variable} ${playfairDisplay.variable} font-sans antialiased`}
+        className={`${mulish.variable} ${playfairDisplay.variable} ${roboto.variable} font-sans antialiased`}
       >
         {children}
       </body>

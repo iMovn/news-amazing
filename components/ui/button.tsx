@@ -21,9 +21,12 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         i_btn:
           "text-white font-medium text-sm bg-gradient-to-br from-pink-500 via-purple-500 to-violet-500 rounded-lg !py-6 shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform",
-        dele_btb: "text-white bg-gradient-to-br from-red-400 to-red-600 rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform",
-        edit_btn: "text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 hover:text-gray-900 hover:scale-[1.02] transition-all",
-        new_btn: "text-white bg-gradient-to-br from-secondary to-primary rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform"
+        dele_btb:
+          "text-white bg-gradient-to-br from-red-400 to-red-600 rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform",
+        edit_btn:
+          "text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 hover:text-gray-900 hover:scale-[1.02] transition-all",
+        new_btn:
+          "text-white bg-gradient-to-br from-secondary to-primary rounded-lg shadow-md shadow-gray-300 hover:scale-[1.02] transition-transform",
       },
       size: {
         default: "h-9 px-4 py-2",

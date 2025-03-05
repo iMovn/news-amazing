@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-primary_layout leading-loose;
+  }
+
+  .direction-rtl {
+    direction: rtl;
+  }
+
+  .direction-ltr {
+    direction: ltr;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile css custom here */
+}

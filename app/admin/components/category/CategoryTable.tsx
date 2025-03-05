@@ -291,7 +291,14 @@ export const CategoryTable = () => {
         ),
       },
     ],
-    [isDeleting, handleDelete, users]
+    [
+      getUserInfo,
+      isAlertOpen,
+      setSelectedCategory,
+      isDeleting,
+      handleDelete,
+      users,
+    ]
   );
 
   // Sử dụng useReactTable với phân trang
