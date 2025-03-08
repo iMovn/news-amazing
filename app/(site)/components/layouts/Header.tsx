@@ -15,12 +15,12 @@ export default function Header() {
         <Link href="/">
           <Image
             src={Logo}
-            width="280"
-            height="65"
+            width={280}
+            height={65}
             alt="logo-hepfu"
-            priority
             quality={100}
-            className="md:w-72 w-56 h-auto"
+            loading="lazy"
+            className="md:w-72 w-auto h-auto"
           />
         </Link>
         {/* Menu Desktop */}

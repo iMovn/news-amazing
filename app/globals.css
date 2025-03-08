@@ -18,4 +18,12 @@
 
 @media (max-width: 768px) {
   /* Mobile css custom here */
+  .__left_mobile div.text-right {
+    text-align: left;
+  }
+
+  .__left_mobile img {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+  }
 }

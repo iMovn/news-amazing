@@ -39,13 +39,13 @@ export default function Activities() {
               <div key={index} className="flex items-center gap-4">
                 {/* Icon Container */}
                 {/* Icon */}
-                <div className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center bg-green-900/50 rounded-full shrink-0">
+                <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-green-900/50 rounded-full shrink-0">
                   <Image
                     src={item.icon}
                     alt={item.title}
                     width={40} // Mobile: 40px
                     height={40}
-                    className="md:w-14 md:h-14 w-8 h-8 transition-transform hover:scale-110"
+                    className="md:w-14 md:h-14 w-12 h-12 transition-transform hover:scale-110"
                   />
                 </div>
                 <span className="text-base md:text-xl md:font-semibold">

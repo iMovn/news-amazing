@@ -38,9 +38,11 @@ const features = [
 export default function Features() {
   return (
     <section className="container mx-auto md:-mt-5">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-3 md:gap-8 gap-2 items-center">
         {/* Left Column */}
-        <FeatureList items={features.slice(0, 3)} align="right" />
+        <div className="__left_mobile">
+          <FeatureList items={features.slice(0, 3)} align="right" />
+        </div>
 
         {/* Center Background */}
         <div className="hidden md:flex items-center justify-center">
@@ -70,7 +72,7 @@ function FeatureList({
   align: "left" | "right";
 }) {
   return (
-    <div className={`flex flex-col gap-8 text-left md:text-${align}`}>
+    <div className={`flex flex-col md:gap-8 gap-2 text-${align}`}>
       {items.map((item, index) => (
         <FeatureItem key={index} item={item} align={align} />
       ))}
@@ -100,14 +102,14 @@ function FeatureItem({
           height={110}
           loading="lazy"
           quality={100}
-          className="w-auto h-auto max-w-[110px] max-h-[110px]"
+          className="md:max-w-[80px] md:max-h-[80px] max-w-[50px] max-h-[50px]"
         />
       </div>
 
       {/* Text */}
       <div className="">
-        <h3 className="font-bold text-lg">{item.title}</h3>
-        <p className="text-gray-600">{item.description}</p>
+        <h3 className="font-bold md:text-lg text-sm">{item.title}</h3>
+        <p className="text-gray-600 md:text-base text-xs">{item.description}</p>
       </div>
     </div>
   );
