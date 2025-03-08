@@ -63,7 +63,7 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <motion.div className="relative mb-3" whileHover={{ scale: 1.05 }}>
+      <motion.div className="relative md:mb-3" whileHover={{ scale: 1.05 }}>
         <Image
           src={item.icon}
           alt={item.label}
@@ -71,11 +71,11 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
           height={506}
           loading="lazy"
           quality={100}
-          className="md:max-w-[80px] md:max-h-[80px] max-w-[50px] max-h-[50px]"
+          className="md:max-w-[80px] md:max-h-[80px] max-w-[60px] max-h-[60px]"
         />
       </motion.div>
 
-      <div className="text-primary_layout font-nav_h_layout text-5xl font-extrabold">
+      <div className="text-primary_layout font-nav_h_layout md:text-4xl text-2xl font-extrabold">
         <span ref={countUpRef} />
       </div>
 
@@ -83,7 +83,7 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={isHovered ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="text-gray-500 font-nav_h_layout text-base font-bold uppercase mt-2"
+        className="text-gray-500 font-nav_h_layout md:text-sm text-xs font-bold uppercase md:mt-2"
       >
         {item.label}
       </motion.div>
@@ -93,24 +93,33 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
 
 const Volunteer: React.FC = () => {
   return (
-    <div className="w-full max-w-6xl mx-auto py-12 px-4">
+    <section className="w-full max-w-6xl mx-auto md:pt-24 py-8 px-4">
       <div className="text-center mb-6">
-        <h2 className="text-4xl font-bold mb-2">
-          EVERY DAY 8,000 <span className="text-lime-500">VOLUNTEERS</span>
+        <h2 className="md:text-3xl text-xl font-extrabold mb-2">
+          EVERY DAY 99+{" "}
+          <span className="text-primary_layout uppercase">VOLUNTEERS</span>
         </h2>
-        <div className="flex justify-center">
-          <div className="border-t border-gray-300 w-24 mt-6"></div>
+        <div className="relative flex justify-center">
+          <Image
+            src={"/images/divide.jpg"}
+            alt="divi"
+            width={506}
+            height={506}
+            loading="lazy"
+            quality={100}
+            className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:mt-12">
         {itemVolunteer.map((item) => (
           <StatCard key={item.id} item={item} />
         ))}
       </div>
 
       <div className="text-center text-gray-600 mt-12 max-w-3xl mx-auto">
-        <p>
+        <p className="md:text-base text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
           venenatis in eros etiaculis. Vivamus volutpat hendrerit elementum.
         </p>
@@ -120,11 +129,11 @@ const Volunteer: React.FC = () => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-primary_layout text-white px-7 py-1 flex rounded-md items-center"
+          className="bg-primary_layout md:text-sm text-xs text-white md:px-7 px-3 py-2 flex rounded-md items-center font-bold"
         >
           Xem chi tiết
           <svg
-            className="w-5 h-5 ml-2"
+            className="md:w-5 w-4 md:h-5 h-4 ml-2"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -138,7 +147,7 @@ const Volunteer: React.FC = () => {
           </svg>
         </motion.button>
       </div>
-    </div>
+    </section>
   );
 };
 
