@@ -4,6 +4,9 @@ import Features from "./components/home/Features";
 import Volunteer from "./components/home/Volunteer";
 import PortfolioGrid from "./components/home/Portfolio";
 import NewsPosts from "./components/home/NewsPost";
+import EventSection from "./components/home/Event";
+import Donate from "./components/home/Donate";
+import Footer from "./components/layouts/Footer";
 
 export default function SitePage() {
   return (
@@ -14,7 +17,9 @@ export default function SitePage() {
       <Volunteer />
       <PortfolioGrid />
       <NewsPosts />
-      <div className="mb-96"></div>
+      <EventSection />
+      <Donate />
+      <Footer />
     </>
   );
 }
