@@ -79,13 +79,24 @@ const galleryImages = [
 const Footer = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   return (
-    <footer className="bg-white pt-12 pb-6 border-t border-gray-200">
+    <footer className="bg-white pt-12 border-t border-gray-200">
       <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-[30%,30%,10%,23%] gap-8 px-4">
         {/* About */}
         <div>
           <h3 className="text-lg font-extrabold mb-3 uppercase text-primary_layout">
             Về Chúng Tôi
           </h3>
+          <div className="relative flex mb-4">
+            <Image
+              src={"/images/divide.jpg"}
+              alt="divi"
+              width={506}
+              height={506}
+              loading="lazy"
+              quality={100}
+              className="max-w-[50px] max-h-[50px]"
+            />
+          </div>
           <p className="text-sm text-gray-600 mb-4 text-justify">
             {aboutInfo.description}
           </p>
@@ -116,6 +127,17 @@ const Footer = () => {
           <h3 className="text-lg font-extrabold mb-3 uppercase text-primary_layout">
             Bài viết mới
           </h3>
+          <div className="relative flex mb-4">
+            <Image
+              src={"/images/divide.jpg"}
+              alt="divi"
+              width={506}
+              height={506}
+              loading="lazy"
+              quality={100}
+              className="max-w-[50px] max-h-[50px]"
+            />
+          </div>
           <ul className="space-y-4">
             {lastNews.map((news) => (
               <li key={news.id} className="flex items-start gap-3 mb-3">
@@ -144,6 +166,17 @@ const Footer = () => {
           <h3 className="text-lg font-extrabold mb-3 uppercase text-primary_layout">
             Sitemap
           </h3>
+          <div className="relative flex mb-4">
+            <Image
+              src={"/images/divide.jpg"}
+              alt="divi"
+              width={506}
+              height={506}
+              loading="lazy"
+              quality={100}
+              className="max-w-[50px] max-h-[50px]"
+            />
+          </div>
           <ul className="text-sm text-gray-600 space-y-1">
             {sitemapLinks.map((link) => (
               <li key={link} className="hover:text-hover_layout cursor-pointer">
@@ -155,7 +188,20 @@ const Footer = () => {
 
         {/* Gallery */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Ảnh đẹp</h3>
+          <h3 className="text-lg font-extrabold mb-3 uppercase text-primary_layout">
+            Ảnh đẹp
+          </h3>
+          <div className="relative flex mb-4">
+            <Image
+              src={"/images/divide.jpg"}
+              alt="divi"
+              width={506}
+              height={506}
+              loading="lazy"
+              quality={100}
+              className="max-w-[50px] max-h-[50px]"
+            />
+          </div>
           <div className="grid grid-cols-3 gap-2">
             {galleryImages.map((img) => (
               <Dialog key={img}>
