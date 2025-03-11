@@ -6,7 +6,6 @@ import PortfolioGrid from "./components/home/Portfolio";
 import NewsPosts from "./components/home/NewsPost";
 import EventSection from "./components/home/Event";
 import Donate from "./components/home/Donate";
-import Footer from "./components/layouts/Footer";
 
 export default function SitePage() {
   return (
@@ -16,10 +15,9 @@ export default function SitePage() {
       <Features />
       <Volunteer />
       <PortfolioGrid />
-      <NewsPosts />
       <EventSection />
       <Donate />
-      <Footer />
+      <NewsPosts />
     </>
   );
 }

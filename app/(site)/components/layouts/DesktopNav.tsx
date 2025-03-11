@@ -1,10 +1,20 @@
 "use client";
 import { fetchMenu } from "../api/menu";
-import { MenuItem } from "../types/menu";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { MenuItem } from "../types/MenuRes";
+
+// Hàm đệ quy lọc menu có is_active: 1
+function filterActiveMenu(items: MenuItem[]): MenuItem[] {
+  return items
+    .filter((item) => item.is_active === 1)
+    .map((item) => ({
+      ...item,
+      children: item.children ? filterActiveMenu(item.children) : [],
+    }));
+}
 
 export default function DesktopNav() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -21,14 +31,14 @@ export default function DesktopNav() {
   }, []);
 
   // Hàm đệ quy lọc menu có is_active: 1
-  const filterActiveMenu = (items: MenuItem[]): MenuItem[] => {
-    return items
-      .filter((item) => item.is_active === 1)
-      .map((item) => ({
-        ...item,
-        children: item.children ? filterActiveMenu(item.children) : [],
-      }));
-  };
+  // const filterActiveMenu = (items: MenuItem[]): MenuItem[] => {
+  //   return items
+  //     .filter((item) => item.is_active === 1)
+  //     .map((item) => ({
+  //       ...item,
+  //       children: item.children ? filterActiveMenu(item.children) : [],
+  //     }));
+  // };
 
   // Hàm kiểm tra xem một menu item có active không
   const isItemActive = (link: string): boolean => {

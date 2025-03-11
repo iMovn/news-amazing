@@ -7,12 +7,70 @@
     @apply font-primary_layout leading-loose;
   }
 
+  .content_post table {
+    @apply !w-full overflow-x-auto block;
+  }
+
+  .toc {
+    @apply border border-gray-200 bg-gray-50 rounded-lg p-4 text-sm;
+  }
+
+  .toc li.h2 {
+    @apply font-semibold text-gray-800 mb-1;
+  }
+  .toc li.h3 {
+    @apply ml-4 text-gray-600 mb-1;
+  }
+  .toc li.h4 {
+    @apply ml-6 text-gray-500 mb-1;
+  }
+
+  .toc a {
+    @apply hover:text-blue-600 transition-colors duration-200;
+  }
+
   .direction-rtl {
     direction: rtl;
   }
 
   .direction-ltr {
     direction: ltr;
+  }
+
+  .head_cus::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 6px;
+    background-image: url(/images/borderhd.png);
+    z-index: 50;
+  }
+
+  .ft_cus::before {
+    content: "";
+    position: absolute;
+    background-image: url(/images/borderft4.png);
+    width: 100%;
+    height: 9px;
+    top: -6px;
+    left: 0;
+  }
+
+  .volunteer-about::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0px;
+    width: 100%;
+    height: 6px;
+    background-image: url(/images/borderhd.png);
+    z-index: 50;
+  }
+
+  .ul_latest_post li:last-child {
+    border-bottom: 0px solid transparent;
   }
 }
 

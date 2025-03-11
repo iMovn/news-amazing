@@ -71,9 +71,11 @@ const NewsPosts = () => {
             className="group border rounded-md overflow-hidden shadow-md"
           >
             <div className="relative overflow-hidden">
-              <img
+              <Image
                 src={post.img}
                 alt={post.title}
+                width={500}
+                height={500}
                 className="w-full h-64 object-cover transform transition-transform duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-primary_layout bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

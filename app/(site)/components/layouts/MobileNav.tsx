@@ -1,20 +1,30 @@
 "use client";
 import { fetchMenu } from "../../components/api/menu";
 import { usePathname } from "next/navigation";
-import { MenuItem } from "../types/menu";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { Menu as MenuIcon, ChevronRight, ChevronDown } from "lucide-react";
+import { MenuItem } from "../types/MenuRes";
 
 export default function MobileNav() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const pathname = usePathname();
+
+  // Bọc bằng useCallback để không bị thay đổi mỗi lần render
+  const filterActiveMenu = useCallback((items: MenuItem[]): MenuItem[] => {
+    return items
+      .filter((item) => item.is_active === 1)
+      .map((item) => ({
+        ...item,
+        children: item.children ? filterActiveMenu(item.children) : [],
+      }));
+  }, []);
 
   useEffect(() => {
     async function getMenu() {
@@ -24,15 +34,6 @@ export default function MobileNav() {
     }
     getMenu();
   }, [filterActiveMenu]);
-
-  function filterActiveMenu(items: MenuItem[]): MenuItem[] {
-    return items
-      .filter((item) => item.is_active === 1)
-      .map((item) => ({
-        ...item,
-        children: item.children ? filterActiveMenu(item.children) : [],
-      }));
-  }
 
   const generateMenuKey = (id: number, parentKey?: string) =>
     parentKey ? `${parentKey}-${id}` : `${id}`;

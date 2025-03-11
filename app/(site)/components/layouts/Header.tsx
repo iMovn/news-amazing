@@ -8,7 +8,7 @@ import Logo from "@/public/hepfu-logo.png";
 
 export default function Header() {
   return (
-    <header className="w-full shadow-xl">
+    <header className="head_cus relative w-full shadow-xl">
       <TopBar />
       <div className="container mx-auto flex justify-between items-center py-3 px-4">
         {/* Logo */}

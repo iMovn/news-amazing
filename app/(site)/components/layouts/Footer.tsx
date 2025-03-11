@@ -79,7 +79,7 @@ const galleryImages = [
 const Footer = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   return (
-    <footer className="bg-white pt-12 border-t border-gray-200">
+    <footer className="ft_cus relative bg-white pt-12 shadow-xl">
       <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-[30%,30%,10%,23%] gap-8 px-4">
         {/* About */}
         <div>
@@ -216,7 +216,7 @@ const Footer = () => {
                   />
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl p-0 bg-transparent border-none shadow-none">
-                  <img
+                  <Image
                     src={selectedImage ?? img}
                     alt="preview"
                     className="w-full h-auto rounded"

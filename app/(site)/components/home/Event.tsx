@@ -62,7 +62,7 @@ const EventSection = () => {
   const latestEvents = events.slice(0, 3);
 
   return (
-    <div className="mx-auto md:w-[1000px] md:mt-5 px-4">
+    <div className="mx-auto md:w-[1000px] md:mt-12 px-4">
       <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center">
         UPCOMING <span className="text-primary_layout uppercase">EVENTS</span>
       </h2>
@@ -86,9 +86,11 @@ const EventSection = () => {
               className="group relative flex flex-col md:flex-row items-center overflow-hidden bg-white transition border-[1px]"
             >
               <div className="relative w-full md:w-1/3">
-                <img
+                <Image
                   src={event.img}
                   alt={event.title}
+                  width={500}
+                  height={500}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-3 left-3 text-primary_layout px-2 text-center border-[1px] border-primary_layout bg-white group-hover:bg-primary_layout group-hover:text-white rounded-md z-50">
