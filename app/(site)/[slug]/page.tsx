@@ -27,6 +27,7 @@ export default async function SlugPage({
   const latestPosts = await getLatestPosts(5); // Lấy 5 bài viết mới nhất
 
   if (!categories.length) return notFound();
+
   // IN POSTS
   if (isPost) {
     const cleanSlug = slug.replace(/\.html$/, "");

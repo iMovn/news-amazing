@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import React from "react";
-import OurVision from "./components/OurVision";
-import VolunteerAbout from "./components/Volunteer";
-import TeamWork from "./components/TeamWork";
-import Testimonial from "./components/Testimonial";
-import NewsPosts from "../components/home/NewsPost";
-import Partner from "./components/Partner";
+import Contact from "./components/Contact";
+import Partner from "../gioi-thieu/components/Partner";
+import Gmap from "./components/Gmap";
 
-export default function AboutUs() {
+export default function ContactUs() {
   return (
     <>
       <section
@@ -27,17 +24,14 @@ export default function AboutUs() {
                 </Link>
                 <span className="mx-2">/</span>
               </li>
-              <li>Giới thiệu</li>
+              <li>Liên hệ</li>
             </ol>
           </nav>
-          <h1 className="text-xl md:text-2xl font-bold">Giới thiệu</h1>
+          <h1 className="text-xl md:text-2xl font-bold">Liên hệ</h1>
         </div>
       </section>
-      <OurVision />
-      <VolunteerAbout />
-      <TeamWork />
-      <Testimonial />
-      <NewsPosts />
+      <Gmap />
+      <Contact />
       <Partner />
     </>
   );

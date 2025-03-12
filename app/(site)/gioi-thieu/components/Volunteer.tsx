@@ -70,11 +70,11 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
           height={506}
           loading="lazy"
           quality={100}
-          className="md:max-w-[80px] md:max-h-[80px] max-w-[60px] max-h-[60px]"
+          className="md:max-w-[70px] md:max-h-[70px] max-w-[60px] max-h-[60px] rounded-sm"
         />
       </motion.div>
 
-      <div className="text-white font-nav_h_layout md:text-4xl text-2xl font-extrabold">
+      <div className="text-white font-nav_h_layout md:text-3xl mt-2 text-2xl font-extrabold">
         <span ref={countUpRef} />
       </div>
 
@@ -93,7 +93,7 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
 const VolunteerAbout: React.FC = () => {
   return (
     <section
-      className="volunteer-about relative w-full bg-cover md:bg-left-bottom bg-left-top py-16 md:mt-10 mt-10"
+      className="volunteer-about relative w-full bg-cover md:bg-left-bottom bg-left-top py-20 md:mt-10 mt-10"
       style={{ backgroundImage: "url('/images/bg-donate.jpg')" }}
     >
       {/* Overlay */}

@@ -69,6 +69,17 @@
     z-index: 50;
   }
 
+  .volunteer-about::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    height: 6px;
+    background-image: url(/images/cutdown.png);
+    z-index: 50;
+  }
+
   .ul_latest_post li:last-child {
     border-bottom: 0px solid transparent;
   }
