@@ -5,7 +5,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 // Lấy toàn bộ danh mục (type=post)
 export async function fetchAllCategories() {
-  const res = await axios.get(`${apiUrl}/site/category?type=post`);
+  const res = await axios.get(`${apiUrl}/site/category?type=post&domain_id=11`);
   return res.data.data.categories || [];
 }
 
@@ -16,7 +16,7 @@ export async function fetchCategoryBySlug(
 ): Promise<CategoryResponse | null> {
   try {
     const res = await axios.get(
-      `${apiUrl}/site/category?type=post&slug=${slug}&page=${page}`
+      `${apiUrl}/site/category?type=post&slug=${slug}&page=${page}&domain_id=11`
     );
     return res.data.data;
   } catch {

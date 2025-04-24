@@ -6,7 +6,9 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 async function fetchAllData() {
   try {
-    const res = await axios.get(`${apiUrl}/site/category?type=post`);
+    const res = await axios.get(
+      `${apiUrl}/site/category?type=post&domain_id=11`
+    );
     return {
       categories: res.data.data.categories,
       posts: res.data.data.items.data,

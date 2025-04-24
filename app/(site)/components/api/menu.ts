@@ -5,7 +5,7 @@ if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL chưa được cấu hình!");
 
 export async function fetchMenu(): Promise<MenuItem[]> {
   try {
-    const res = await fetch(`${apiUrl}/site/menu`);
+    const res = await fetch(`${apiUrl}/site/menu?type=main&domain_id=11`);
     if (!res.ok) throw new Error("Lỗi khi lấy menu");
 
     const { data } = await res.json();
