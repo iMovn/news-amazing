@@ -1,6 +1,10 @@
+import { Metadata } from "next";
 import "./globals.css";
 import { Mulish, Playfair_Display, Roboto } from "next/font/google";
+import { getSeoMetadata } from "@/lib/getSeoMetadata";
+import dynamic from "next/dynamic";
 
+// Load fonts
 const mulish = Mulish({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800", "900", "1000"],
@@ -22,13 +26,43 @@ const roboto = Roboto({
   display: "swap",
 });
 
-export default function RootLayout({
+// Metadata API (SEO động cho tất cả các trang)
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoMetadata();
+
+  return {
+    title: seo?.title || "Trang mặc định",
+    description: seo?.description || "",
+    authors: seo?.authors,
+    openGraph: seo?.openGraph,
+    twitter: seo?.twitter,
+    other: seo?.other,
+    alternates: seo?.alternates,
+  };
+}
+
+// Dynamic load scripts để tránh lỗi hydration
+const SeoScripts = dynamic(() => import("@/lib/SeoScripts"), {
+  ssr: false,
+});
+
+// Layout chính
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const seo = await getSeoMetadata();
+
   return (
     <html lang="vi" suppressHydrationWarning={true}>
+      <head>
+        <link
+          rel="icon"
+          href="https://api.shenlong.cloud/storage/uploads/media/hanquoc18.abc/favicon/2025-05-01/NgkDRYQnCuwZ95xJ94jhewiwJwXEBVjnM9EWKiOm.jpg"
+        />
+        {seo && <SeoScripts seo={seo} />}
+      </head>
       <body
         className={`${mulish.variable} ${playfairDisplay.variable} ${roboto.variable} font-sans antialiased`}
       >

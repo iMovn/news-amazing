@@ -12,6 +12,85 @@ import Pagination from "../components/layouts/Pagination";
 import { PostType } from "../components/types/PostRes";
 import { formatDateVi } from "@/utils/date";
 import { CalendarDays, CircleUser } from "lucide-react";
+import { Metadata } from "next";
+
+// 🧠 SEO metadata động cho từng slug
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const { slug } = params;
+  const isPost = slug.endsWith(".html");
+  const categories = await fetchAllCategories();
+
+  if (!categories.length) return {};
+
+  if (isPost) {
+    const cleanSlug = slug.replace(/\.html$/, "");
+    let postData: PostType | null = null;
+
+    for (const category of categories) {
+      const tempPost = await fetchPost(cleanSlug, category.id);
+      if (tempPost) {
+        const realCategoryId = tempPost.categories?.[0]?.id;
+        postData = realCategoryId
+          ? await fetchPost(cleanSlug, realCategoryId)
+          : tempPost;
+        break;
+      }
+    }
+
+    if (!postData) return {};
+
+    return {
+      title: postData.meta_title || postData.name,
+      description: postData.meta_description || postData.description,
+      openGraph: {
+        title: postData.meta_title || postData.name,
+        description: postData.meta_description || postData.description,
+        url: postData.slug || "",
+        images: [
+          {
+            url: postData.image_url || "",
+            alt: postData.name || "",
+          },
+        ],
+        type: "article",
+      },
+      alternates: {
+        canonical:
+          postData.canonical || `${process.env.NEXT_PUBLIC_URL}/${slug}`,
+      },
+    };
+  }
+
+  const categoryData = await fetchCategoryBySlug(slug, 1);
+  if (!categoryData?.details) return {};
+
+  return {
+    title: categoryData.details.meta_title || categoryData.details.name,
+    description:
+      categoryData.details.meta_description || categoryData.details.description,
+    openGraph: {
+      title: categoryData.details.name || "",
+      description: categoryData.details.description || "",
+      url: categoryData.details.slug || "",
+      images: [
+        {
+          url: categoryData.details.image_url || "",
+          alt: categoryData.details.name || "",
+        },
+      ],
+      type: "website",
+    },
+    alternates: {
+      canonical:
+        categoryData.details.canonical ||
+        `${process.env.NEXT_PUBLIC_URL}/${slug}`,
+    },
+  };
+}
 
 export default async function SlugPage({
   params,

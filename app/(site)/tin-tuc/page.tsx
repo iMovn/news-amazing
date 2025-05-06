@@ -2,7 +2,33 @@ import axios from "axios";
 import Sidebar from "../[slug]/components/Sidebar";
 import PostCard from "../[slug]/components/PostCard";
 
+import { Metadata } from "next";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+export const metadata: Metadata = {
+  title: "Tin tức - HEPFU",
+  description: "Blog - Tin Tức Mới Nhất HEPFU",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_URL}/tin-tuc`,
+  },
+  openGraph: {
+    title: "Tin tức - HEPFU",
+    description: "Blog - Tin Tức Mới Nhất HEPFU",
+    type: "website",
+    locale: "vi-VN",
+    url: `${process.env.NEXT_PUBLIC_URL}/tin-tuc`,
+    siteName: "HEPFU",
+    images: [
+      {
+        url: "/images/portfolio2.jpg", // Must be an absolute URL
+        width: 1200,
+        height: 630,
+        alt: "tin-tuc-blog",
+      },
+    ],
+  },
+};
 
 async function fetchAllData() {
   try {

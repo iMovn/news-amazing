@@ -1,11 +1,11 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { formatDateVi } from "@/utils/date";
 import { CategoryPost } from "../../components/types/CategoryRes";
+import DOMPurify from "isomorphic-dompurify";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays } from "lucide-react";
 
 function PostImage({ src, alt }: { src: string; alt: string }) {
@@ -34,6 +34,12 @@ export default function PostCard({
   posts: CategoryPost[];
   categoryName: string;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!posts || posts.length === 0) {
     return (
       <p>
@@ -62,6 +68,14 @@ export default function PostCard({
               {post.name}
             </h3>
           </Link>
+          {mounted && (
+            <p
+              className="text-sm text-gray-600 mt-1 line-clamp-3"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(post.description || ""),
+              }}
+            />
+          )}
         </div>
       ))}
     </div>

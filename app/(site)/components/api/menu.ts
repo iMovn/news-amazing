@@ -1,11 +1,14 @@
 import { MenuItem } from "../types/MenuRes";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL chưa được cấu hình!");
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
+if (!API_BASE_URL) throw new Error("NEXT_PUBLIC_API_URL chưa được cấu hình!");
 
 export async function fetchMenu(): Promise<MenuItem[]> {
   try {
-    const res = await fetch(`${apiUrl}/site/menu?type=main&domain_id=11`);
+    const res = await fetch(
+      `${API_BASE_URL}/site/menu?type=main&domain_id=${DOMAIN_ID}`
+    );
     if (!res.ok) throw new Error("Lỗi khi lấy menu");
 
     const { data } = await res.json();

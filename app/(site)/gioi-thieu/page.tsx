@@ -1,44 +1,30 @@
-"use client";
+import ViewAbout from "./view";
+import { Metadata } from "next";
 
-import Link from "next/link";
-import React from "react";
-import OurVision from "./components/OurVision";
-import VolunteerAbout from "./components/Volunteer";
-import TeamWork from "./components/TeamWork";
-import Testimonial from "./components/Testimonial";
-import NewsPosts from "../components/home/NewsPost";
-import Partner from "./components/Partner";
+export const metadata: Metadata = {
+  title: "Giới thiệu - HEPFU",
+  description: "Giới thiệu HEPFU",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_URL}/gioi-thieu`,
+  },
+  openGraph: {
+    title: "Giới thiệu HEPFU",
+    description: "Giới thiệu HEPFU",
+    type: "website",
+    locale: "vi-VN",
+    url: `${process.env.NEXT_PUBLIC_URL}/gioi-thieu`,
+    siteName: "HEPFU",
+    images: [
+      {
+        url: "/images/portfolio7.jpg", // Must be an absolute URL
+        width: 1200,
+        height: 630,
+        alt: "gioi-thieu-hepfu",
+      },
+    ],
+  },
+};
 
 export default function AboutUs() {
-  return (
-    <>
-      <section
-        className="relative w-full bg-cover md:bg-left-bottom bg-left-top py-[59px] z-0"
-        style={{ backgroundImage: "url('/images/bg-head.jpg')" }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 transition-transform z-0"></div>
-        <div className="container mx-auto relative text-white z-10">
-          <nav className="text-sm mb-1">
-            <ol className="flex flex-wrap items-center gap-1 text-gray-800">
-              <li className="flex items-center">
-                <Link href="/" className="">
-                  Trang chủ
-                </Link>
-                <span className="mx-2">/</span>
-              </li>
-              <li>Giới thiệu</li>
-            </ol>
-          </nav>
-          <h1 className="text-xl md:text-2xl font-bold">Giới thiệu</h1>
-        </div>
-      </section>
-      <OurVision />
-      <VolunteerAbout />
-      <TeamWork />
-      <Testimonial />
-      <NewsPosts />
-      <Partner />
-    </>
-  );
+  return <ViewAbout />;
 }

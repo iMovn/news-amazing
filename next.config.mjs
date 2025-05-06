@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ["apishenlong.phuocdev.click"],
+        domains: ["api.shenlong.cloud"],
     },
 };
 

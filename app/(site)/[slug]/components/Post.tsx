@@ -1,6 +1,6 @@
 "use client";
 
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
 import { PostType } from "../../components/types/PostRes";
 import { insertTocToContent } from "@/utils/insertToc";
@@ -11,7 +11,7 @@ export default function Post({ post }: { post: PostType }) {
     <div className="space-y-3">
       {/* Nội dung bài viết */}
       <div
-        className="content_post prose max-w-none"
+        className="content_post prose max-w-none text-justify"
         dangerouslySetInnerHTML={{
           __html: DOMPurify.sanitize(contentWithToc),
         }}

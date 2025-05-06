@@ -4,6 +4,7 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
+  description?: string;
   pivot: {
     post_id: number;
     category_id: number;
@@ -33,6 +34,7 @@ export interface PostType {
   id: number;
   name: string;
   slug: string;
+  description?: string;
   content: string;
   image?: string;
   image_url?: string;
@@ -45,4 +47,7 @@ export interface PostType {
   breadcrumbs: Breadcrumb[];
   related_posts?: RelatedPost[];
   categories: Category[];
+  meta_title?: string;
+  meta_description?: string;
+  canonical?: string;
 }

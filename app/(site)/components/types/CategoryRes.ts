@@ -7,6 +7,11 @@ export interface Category {
   is_active?: number;
   parent_id?: number;
   children?: Category[];
+  description?: string;
+  image_url?: string;
+  meta_title?: string;
+  meta_description?: string;
+  canonical?: string;
 }
 
 export interface CategoryPost {
@@ -15,6 +20,7 @@ export interface CategoryPost {
   slug: string;
   created_at: string;
   image_url: string;
+  description: string;
   categories: {
     id: number;
     name: string;

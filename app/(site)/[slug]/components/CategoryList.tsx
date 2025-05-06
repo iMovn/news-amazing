@@ -1,12 +1,29 @@
 import Link from "next/link";
 import { Category } from "../../components/types/CategoryRes";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+// Đệ quy lọc các danh mục active
+const filterActiveCategories = (categories: Category[]): Category[] => {
+  return categories
+    .filter((cat) => cat.is_active === 1)
+    .map((cat) => ({
+      ...cat,
+      children: cat.children ? filterActiveCategories(cat.children) : [],
+    }));
+};
 
 export default function CategoryList({
   categories,
 }: {
   categories: Category[];
 }) {
+  const pathname = usePathname();
+  const activeCategories = filterActiveCategories(categories);
+
+  // Hàm kiểm tra slug hiện tại có đang là slug của danh mục hay không
+  const isActive = (slug: string) => pathname === `/${slug}`;
+
   return (
     <div className="shadow-md rounded-md p-3 border-[1px]">
       <h5 className="text-base font-extrabold mb-2 text-primary_layout uppercase">
@@ -24,11 +41,15 @@ export default function CategoryList({
         />
       </div>
       <ul className="space-y-1">
-        {categories.map((cat) => (
+        {activeCategories.map((cat) => (
           <li key={cat.id}>
             <Link
               href={`/${cat.slug}`}
-              className="text-base text-gray-700 hover:text-primary_layout"
+              className={`text-base hover:text-primary_layout ${
+                isActive(cat.slug)
+                  ? "text-primary_layout font-semibold"
+                  : "text-gray-700"
+              }`}
             >
               {cat.name}
             </Link>
@@ -39,7 +60,9 @@ export default function CategoryList({
                   <li key={child.id}>
                     <Link
                       href={`/${child.slug}`}
-                      className="text-sm text-gray-600 hover:text-blue-500"
+                      className={`text-sm hover:text-blue-500 ${
+                        isActive(child.slug) ? "text-red-600 font-semibold" : "text-gray-600"
+                      }`}
                     >
                       {child.name}
                     </Link>
