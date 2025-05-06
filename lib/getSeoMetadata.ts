@@ -16,6 +16,11 @@ export async function getSeoMetadata() {
     title: seo?.meta_title || "",
     description: seo?.meta_description || "",
     authors: [{ name: seo?.meta_author || "Admin" }],
+    icons: {
+      icon: seo?.favicon || "/favicon.ico",
+      shortcut: seo?.favicon || "/favicon.ico",
+      apple: seo?.favicon || "/favicon.ico",
+    },
     openGraph: {
       title: seo?.meta_og_title || "",
       description: seo?.meta_og_description || "",

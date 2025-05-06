@@ -38,6 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: seo?.twitter,
     other: seo?.other,
     alternates: seo?.alternates,
+    icons: seo?.icons,
   };
 }
 
@@ -56,13 +57,7 @@ export default async function RootLayout({
 
   return (
     <html lang="vi" suppressHydrationWarning={true}>
-      <head>
-        <link
-          rel="icon"
-          href="https://api.shenlong.cloud/storage/uploads/media/hanquoc18.abc/favicon/2025-05-01/NgkDRYQnCuwZ95xJ94jhewiwJwXEBVjnM9EWKiOm.jpg"
-        />
-        {seo && <SeoScripts seo={seo} />}
-      </head>
+      <head>{seo && <SeoScripts seo={seo} />}</head>
       <body
         className={`${mulish.variable} ${playfairDisplay.variable} ${roboto.variable} font-sans antialiased`}
       >
