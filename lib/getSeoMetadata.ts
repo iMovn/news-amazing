@@ -11,15 +11,16 @@ export async function getSeoMetadata() {
   if (!json.status) return null;
 
   const seo = json.data?.seo || {};
+  const favicon = json.data?.favicon || "/favicon.ico";
 
   return {
     title: seo?.meta_title || "",
     description: seo?.meta_description || "",
     authors: [{ name: seo?.meta_author || "Admin" }],
     icons: {
-      icon: seo?.favicon || "/favicon.ico",
-      shortcut: seo?.favicon || "/favicon.ico",
-      apple: seo?.favicon || "/favicon.ico",
+      icon: favicon,
+      shortcut: favicon,
+      apple: favicon,
     },
     openGraph: {
       title: seo?.meta_og_title || "",
@@ -55,5 +56,6 @@ export async function getSeoMetadata() {
     google_analytics: seo?.google_analytics,
     google_ads: seo?.google_ads,
     schema: seo?.schema,
+    google_search_console: seo?.google_search_console,
   };
 }
