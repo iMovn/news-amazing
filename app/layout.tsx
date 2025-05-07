@@ -31,6 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoMetadata();
 
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "Error domain 404"),
     title: seo?.title || "Trang mặc định",
     description: seo?.description || "",
     authors: seo?.authors,

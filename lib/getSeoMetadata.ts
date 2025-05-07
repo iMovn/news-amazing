@@ -3,9 +3,13 @@ const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
 
 export async function getSeoMetadata() {
   const res = await fetch(
-    `${API_BASE_URL}/site/settings?domain_id=${DOMAIN_ID}`,
-    { cache: "no-store" } // đảm bảo lấy mới mỗi lần render
+    `${API_BASE_URL}/site/settings?domain_id=${DOMAIN_ID}`
   );
+
+  if (!res.ok) {
+    console.error("SEO API failed:", res.status);
+    return null;
+  }
 
   const json = await res.json();
   if (!json.status) return null;

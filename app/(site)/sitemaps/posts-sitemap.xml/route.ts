@@ -7,14 +7,7 @@ export async function GET() {
   try {
     // Gọi API lấy danh sách bài viết
     const res = await fetch(
-      `${API_BASE_URL}/site/posts?limit=1000&domain_id=${DOMAIN_ID}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        cache: "no-store",
-      }
+      `${API_BASE_URL}/site/posts?limit=1000&domain_id=${DOMAIN_ID}`
     );
 
     if (!res.ok) {
@@ -60,7 +53,7 @@ export async function GET() {
     return new NextResponse(
       `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`,
       {
-        status: 500,
+        status: 200,
         headers: {
           "Content-Type": "application/xml",
         },
