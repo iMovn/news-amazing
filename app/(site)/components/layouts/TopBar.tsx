@@ -1,12 +1,27 @@
+"use client";
 import { Facebook, Mail, MapPin, PhoneCall, Send, Youtube } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { SettingsData } from "../types/setting";
+import { fetchSiteSettings } from "../api/settings";
 
 export default function TopBar() {
+  // start get api settings
+  const [settings, setSettings] = useState<SettingsData | null>(null);
+  useEffect(() => {
+    const getData = async () => {
+      const data = await fetchSiteSettings();
+      setSettings(data);
+    };
+    getData();
+  }, []);
+  // end get api settings
+
   return (
     <div className="bg-primary_layout text-white py-2">
       <div className="container mx-auto flex md:justify-between justify-center items-center px-4 md:text-sm text-xs">
         <h3 className="capitalize font-medium">
-          Sở tài nguyên và môi trường thành phố Hồ Chí Minh
+          {settings?.company.name || ""}
         </h3>
         <div className="md:flex hidden space-x-4">
           <Link
@@ -18,20 +33,20 @@ export default function TopBar() {
             <MapPin size="16px" /> HEPF - TP. Hồ Chí Minh
           </Link>
           <Link
-            href="tel:84839151980"
+            href={`tel:${settings?.company.phone}`}
             target="_blank"
             rel="nofollow"
             className="flex gap-x-1 items-center hover:text-secondary_layout"
           >
-            <PhoneCall size="16px" /> 84-8-39151980
+            <PhoneCall size="16px" /> {settings?.company.phone || ""}
           </Link>
           <Link
-            href="mailto:info@hepfu.vn"
+            href={`mailto:${settings?.company.email}`}
             target="_blank"
             rel="nofollow"
             className="flex gap-x-1 items-center hover:text-secondary_layout"
           >
-            <Mail size="16px" /> info@hepfu.vn
+            <Mail size="16px" /> {settings?.company.email || ""}
           </Link>
           <div className="flex items-center gap-x-1">
             <Link href="#" className="hover:text-secondary_layout">

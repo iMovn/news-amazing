@@ -30,16 +30,6 @@ export default function DesktopNav() {
     loadMenu();
   }, []);
 
-  // Hàm đệ quy lọc menu có is_active: 1
-  // const filterActiveMenu = (items: MenuItem[]): MenuItem[] => {
-  //   return items
-  //     .filter((item) => item.is_active === 1)
-  //     .map((item) => ({
-  //       ...item,
-  //       children: item.children ? filterActiveMenu(item.children) : [],
-  //     }));
-  // };
-
   // Hàm kiểm tra xem một menu item có active không
   const isItemActive = (link: string): boolean => {
     // Xử lý trường hợp trang chủ
