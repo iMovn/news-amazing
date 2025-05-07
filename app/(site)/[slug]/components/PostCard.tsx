@@ -57,7 +57,10 @@ export default function PostCard({
           className="group border-[1px] rounded-md p-4 shadow-sm border-b-4 border-b-primary_layout"
         >
           <Link href={`/${post.slug}.html`}>
-            <PostImage src={post.image_url} alt={post.slug} />
+            <PostImage
+              src={post.image_url ?? "/img-default.jpg"}
+              alt={post.slug}
+            />
           </Link>
           <p className="flex items-center gap-1 text-xs text-gray-500 mt-3">
             <CalendarDays size="14px" color="#9CC900" />{" "}

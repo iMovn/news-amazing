@@ -19,8 +19,9 @@ export interface CategoryPost {
   name: string;
   slug: string;
   created_at: string;
-  image_url: string;
   description: string;
+  image?: string;
+  image_url?: string;
   categories: {
     id: number;
     name: string;
