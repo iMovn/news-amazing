@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode: true,
     images: {
-        domains: ["api.shenlong.cloud"],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'api.shenlong.cloud',
+            },
+        ],
     },
 };
 
