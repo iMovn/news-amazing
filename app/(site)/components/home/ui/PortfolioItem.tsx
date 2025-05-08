@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import DOMPurify from "isomorphic-dompurify";
 
 interface Portfolio {
   id: number;
@@ -28,7 +29,12 @@ export default function PortfolioItem({ item }: { item: Portfolio }) {
           <h3 className="md:text-2xl text-xl font-bold text-center px-4">
             {item.title}
           </h3>
-          <p className="text-base text-center px-4 mt-2">{item.description}</p>
+          <p
+            className="text-base text-center px-4 mt-2 line-clamp-3"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(item.description || ""),
+            }}
+          />
           <button className="mt-7 px-4 py-2 bg-white rounded-sm text-primary_layout font-bold font-nav_h_layout text-xs uppercase">
             Xem thêm
           </button>
