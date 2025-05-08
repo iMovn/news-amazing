@@ -1,6 +1,6 @@
 import Image from "next/image";
-import fetchCategoryPortfolio from "../api/category";
 import PortfolioItem from "./ui/PortfolioItem";
+import fetchCategoryPortfolio from "../api/home/portfolio";
 
 interface Portfolio {
   id: number;

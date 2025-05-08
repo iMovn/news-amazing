@@ -3,53 +3,19 @@ import React from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import fetchCategoryEvent from "../api/home/event";
+import DOMPurify from "isomorphic-dompurify";
 
-type Event = {
+interface Event {
   id: number;
-  img: string;
-  created_at: string;
+  image_url: string;
   title: string;
   description: string;
-};
+  slug: string;
+  created_at: string;
+}
 
-const events: Event[] = [
-  {
-    id: 1,
-    img: "/images/event1.jpg",
-    created_at: "2025-02-19T08:18:27.000000Z",
-    title:
-      "Quyết định về việc công nhận kết quả tuyển dụng viên chức năm 2024 của Quỹ Bảo vệ môi trường",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vestibulum lacus in cursus rutru tis felis. Nulla convallis neque ac sagittis porttitor. Suspendisse at orci ac diam tinciduntd et ligula. Cras sollicitudin eu...",
-  },
-  {
-    id: 2,
-    img: "/images/event2.jpg",
-    created_at: "2025-01-20T10:30:00.000000Z",
-    title:
-      "Thay đổi thời gian tổ chức thi Vòng 2 – Vấn đáp kỳ tuyển dụng viên chức năm 2024 của Quỹ Bảo vệ môi trường",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vestibulum lacus in cursus rutru tis felis. Nulla convallis neque ac sagittis porttitor. Suspendisse at orci ac diam tinciduntd et ligula. Cras sollicitudin eu...",
-  },
-  {
-    id: 3,
-    img: "/images/event3.jpg",
-    created_at: "2025-01-15T14:45:15.000000Z",
-    title:
-      "Kết quả kiểm tra Phiếu đăng ký dự tuyển và triệu tập thí sinh đủ điều kiện dự tuyển Vòng 2",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vestibulum lacus in cursus rutru tis felis. Nulla convallis neque ac sagittis porttitor. Suspendisse at orci ac diam tinciduntd et ligula. Cras sollicitudin eu...",
-  },
-  {
-    id: 4,
-    img: "/images/event1.jpg",
-    created_at: "2025-03-10T09:00:00.000000Z",
-    title:
-      "Quyết định về việc công nhận kết quả tuyển dụng viên chức năm 2024 của Quỹ Bảo vệ môi trường",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vestibulum lacus in cursus rutru tis felis. Nulla convallis neque ac sagittis porttitor. Suspendisse at orci ac diam tinciduntd et ligula. Cras sollicitudin eu...",
-  },
-];
+const domainUrl = process.env.NEXT_PUBLIC_URL;
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -58,13 +24,15 @@ const formatDate = (dateString: string) => {
   return { day, month: `Th${month}` };
 };
 
-const EventSection = () => {
-  const latestEvents = events.slice(0, 3);
+export default async function EventSection() {
+  // const latestEvents = events.slice(0, 3);
+
+  const events = await fetchCategoryEvent();
 
   return (
-    <div className="mx-auto md:w-[1000px] md:mt-12 px-4">
-      <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center">
-        UPCOMING <span className="text-primary_layout uppercase">EVENTS</span>
+    <div className="mx-auto md:w-[1000px] md:mt-12 mt-10 px-4">
+      <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
+        Văn bản <span className="text-primary_layout uppercase">pháp lý</span>
       </h2>
       <div className="relative flex justify-center mb-9">
         <Image
@@ -78,36 +46,39 @@ const EventSection = () => {
         />
       </div>
       <div className="space-y-6">
-        {latestEvents.map((event) => {
-          const { day, month } = formatDate(event.created_at);
+        {events.map((item: Event) => {
+          const { day, month } = formatDate(item.created_at);
           return (
-            <div
-              key={event.id}
-              className="group relative flex flex-col md:flex-row items-center overflow-hidden bg-white transition border-[1px]"
-            >
-              <div className="relative w-full md:w-1/3">
-                <Image
-                  src={event.img}
-                  alt={event.title}
-                  width={500}
-                  height={500}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 left-3 text-primary_layout px-2 text-center border-[1px] border-primary_layout bg-white group-hover:bg-primary_layout group-hover:text-white rounded-md z-50">
-                  <p className="text-base font-bold">{day}</p>
-                  <p className="text-xs">{month}</p>
+            <Link href={`/${item.slug}.html`} key={item.id}>
+              <div className="group relative flex flex-col md:flex-row items-center overflow-hidden bg-white transition border-[1px] mb-4">
+                <div className="relative w-full md:w-1/3">
+                  <Image
+                    src={item.image_url}
+                    alt={item.title}
+                    width={500}
+                    height={500}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-3 left-3 text-primary_layout px-2 text-center border-[1px] border-primary_layout bg-white group-hover:bg-primary_layout group-hover:text-white rounded-md z-50">
+                    <p className="text-base font-bold">{day}</p>
+                    <p className="text-xs">{month}</p>
+                  </div>
+                  <div className="absolute inset-0 group-hover:bg-primary_layout bg-opacity-0 group-hover:bg-opacity-30 transition"></div>
                 </div>
-                <div className="absolute inset-0 group-hover:bg-primary_layout bg-opacity-0 group-hover:bg-opacity-30 transition"></div>
+                <div className="w-full md:w-2/3 p-6">
+                  <h3 className="text-lg font-bold group-hover:text-primary_layout">
+                    {item.title}
+                  </h3>
+
+                  <div
+                    className="text-base text-gray-600 mt-2 line-clamp-3"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(item.description || ""),
+                    }}
+                  />
+                </div>
               </div>
-              <div className="w-full md:w-2/3 p-6">
-                <h3 className="text-lg font-bold group-hover:text-primary_layout">
-                  {event.title}
-                </h3>
-                <p className="text-base text-gray-600 mt-2">
-                  {event.description}
-                </p>
-              </div>
-            </div>
+            </Link>
           );
         })}
       </div>
@@ -116,13 +87,14 @@ const EventSection = () => {
           asChild
           className="w-auto px-6 py-2 mt-8 bg-primary_layout text-white font-semibold rounded-sm shadow-md hover:bg-[#7DA100] transition"
         >
-          <Link href="#" className="flex items-center justify-center">
-            Xem tất cả sự kiện <ChevronRight />
+          <Link
+            href={`${domainUrl}/van-ban-phap-quy`}
+            className="flex items-center justify-center"
+          >
+            Xem nhiều hơn <ChevronRight />
           </Link>
         </Button>
       </div>
     </div>
   );
-};
-
-export default EventSection;
+}

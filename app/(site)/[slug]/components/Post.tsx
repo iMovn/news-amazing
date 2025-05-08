@@ -20,15 +20,15 @@ export default function Post({ post }: { post: PostType }) {
       {/* Bài viết liên quan */}
       {post.related_posts && post.related_posts.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mt-10 mb-4">
+          <h5 className="text-lg font-semibold mt-10 mb-2">
             Bài viết liên quan
-          </h2>
-          <ul className="list-disc pl-4 space-y-2">
+          </h5>
+          <ul className="list-disc pl-4">
             {post.related_posts.map((related) => (
               <li key={related.id}>
                 <Link
                   href={`/${related.slug}.html`}
-                  className="text-blue-600 hover:underline"
+                  className="text-gray-600 hover:text-primary_layout"
                 >
                   {related.name}
                 </Link>

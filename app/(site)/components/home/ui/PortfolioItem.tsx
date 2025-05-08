@@ -29,7 +29,7 @@ export default function PortfolioItem({ item }: { item: Portfolio }) {
           <h3 className="md:text-2xl text-xl font-bold text-center px-4">
             {item.title}
           </h3>
-          <p
+          <div
             className="text-base text-center px-4 mt-2 line-clamp-3"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(item.description || ""),
@@ -43,7 +43,12 @@ export default function PortfolioItem({ item }: { item: Portfolio }) {
         {/* Hiển thị tiêu đề và mô tả trên mobile */}
         <div className="md:hidden mt-4">
           <h3 className="text-lg font-bold">{item.title}</h3>
-          <p className="text-gray-600 text-sm mt-1">{item.description}</p>
+          <div
+            className="text-gray-600 text-sm mt-1 line-clamp-3"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(item.description || ""),
+            }}
+          />
         </div>
       </Link>
     </motion.div>
