@@ -16,13 +16,9 @@ const fetchCategoryPortfolio = async () => {
     });
 
     const posts = response.data.data.items.data;
-    // Chỉ lấy bài viết có is_active === 1
-    const activePosts = posts.filter(
-      (post: CategoryPost) => post.is_active === 1
-    );
 
     // Chuyển định dạng về portfolios
-    return activePosts.map((post: CategoryPost) => ({
+    return posts.map((post: CategoryPost) => ({
       id: post.id,
       image_url: post.image_url || "/img-default.jpg",
       title: post.name,
