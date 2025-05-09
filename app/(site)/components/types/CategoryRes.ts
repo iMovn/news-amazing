@@ -22,6 +22,7 @@ export interface CategoryPost {
   description: string;
   image?: string;
   image_url?: string;
+  is_active: number;
   categories: {
     id: number;
     name: string;

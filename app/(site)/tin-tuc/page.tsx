@@ -52,11 +52,11 @@ export default async function BlogDefault() {
   const { categories, posts } = await fetchAllData();
 
   return (
-    <div className="container mx-auto flex gap-6 py-10">
-      <aside className="w-1/4">
+    <div className="container mx-auto flex flex-col-reverse md:flex-row gap-10 py-10">
+      <aside className="md:w-[25%] w-full">
         <Sidebar categories={categories} />
       </aside>
-      <main className="w-3/4">
+      <main className="md:w-[75%] w-full">
         <PostCard posts={posts} categoryName="Tin tức" />
       </main>
     </div>

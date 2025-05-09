@@ -38,6 +38,7 @@ export interface PostType {
   content: string;
   image?: string;
   image_url?: string;
+  is_active: number;
   created_at: string;
   updated_at?: string;
   status?: number;
