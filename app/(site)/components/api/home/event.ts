@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CategoryPost } from "../../types/CategoryRes";
+import { CategoryDetail } from "../../types/CategoryRes";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
@@ -17,7 +17,7 @@ const fetchCategoryEvent = async () => {
     const posts = response.data.data.items.data;
 
     // Chuyển định dạng về portfolios
-    return posts.map((post: CategoryPost) => ({
+    return posts.map((post: CategoryDetail) => ({
       id: post.id,
       image_url: post.image_url || "/img-default.jpg",
       title: post.name,

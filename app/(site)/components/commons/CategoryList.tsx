@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Category } from "../../components/types/CategoryRes";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Category } from "../types/CategoryRes";
 
 // Đệ quy lọc các danh mục active
 const filterActiveCategories = (categories: Category[]): Category[] => {

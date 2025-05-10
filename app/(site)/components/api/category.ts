@@ -1,28 +1,66 @@
 import axios from "axios";
-import { CategoryResponse } from "../types/CategoryRes";
+import { Category } from "../types/CategoryRes";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID || "";
 
-// Lấy toàn bộ danh mục (type=post)
-export async function fetchAllCategories() {
-  const res = await axios.get(
-    `${API_BASE_URL}/site/category?type=post&domain_id=${DOMAIN_ID}`
-  );
-  return res.data.data.categories || [];
+/**
+ * Lấy tất cả danh mục
+ */
+export async function fetchAllCategories(): Promise<Category[]> {
+  try {
+    const response = await axios.get(
+      `${API_URL}/site/category?type=post&domain_id=${DOMAIN_ID}`
+    );
+
+    if (
+      response.data &&
+      response.data.data &&
+      Array.isArray(response.data.data.categories)
+    ) {
+      return response.data.data.categories;
+    } else if (response.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    } else if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Error fetching all categories:", error);
+    return [];
+  }
 }
 
-// Lấy danh mục theo slug
-export async function fetchCategoryBySlug(
-  slug: string,
-  page: number = 1
-): Promise<CategoryResponse | null> {
+/**
+ * Lấy chi tiết danh mục theo slug kèm danh sách bài viết có phân trang
+ */
+export async function fetchCategoryBySlug(slug: string, page: number = 1) {
   try {
-    const res = await axios.get(
-      `${API_BASE_URL}/site/category?type=post&slug=${slug}&page=${page}&domain_id=${DOMAIN_ID}`
+    const response = await axios.get(
+      `${API_URL}/site/category?type=post&domain_id=${DOMAIN_ID}&slug=${slug}&page=${page}`
     );
-    return res.data.data;
-  } catch {
+
+    if (response.data && response.data.data) {
+      return response.data.data;
+    }
+
     return null;
+  } catch (error) {
+    console.error(`Error fetching category by slug ${slug}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Lấy danh sách slugs của tất cả danh mục để phục vụ Static Generation
+ */
+export async function getAllCategorySlugs(): Promise<string[]> {
+  try {
+    const categories = await fetchAllCategories();
+    return categories.map((category) => category.slug);
+  } catch (error) {
+    console.error("Error fetching category slugs:", error);
+    return [];
   }
 }

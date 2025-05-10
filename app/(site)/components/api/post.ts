@@ -1,21 +1,19 @@
 import axios from "axios";
-import { PostType } from "../types/PostRes";
-import { LatestPost } from "../types/LatestPostRes";
+import { PostType, RelatedPost } from "../types/PostRes";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID || "";
 
 /**
  * Lấy bài viết theo slug và categoryId
  */
-
 export async function fetchPost(
   slug: string,
   categoryId: number
 ): Promise<PostType | null> {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/site/post?slug=${slug}&domain_id=${DOMAIN_ID}&category_id=${categoryId}`
+      `${API_URL}/site/post?slug=${slug}&domain_id=${DOMAIN_ID}&category_id=${categoryId}`
     );
 
     if (response.data && response.data.status && response.data.data) {
@@ -32,21 +30,24 @@ export async function fetchPost(
 }
 
 /**
- * API mới: Lấy bài viết chỉ dựa vào slug (không cần category_id)
- * Đây là API tối ưu nhất để tránh vòng lặp qua tất cả category
+ * API tối ưu: Lấy bài viết chỉ dựa vào slug  (cho trang chi tiết bài viết)
  */
 export async function fetchPostBySlugOnly(
   slug: string
 ): Promise<PostType | null> {
   try {
-    // Gọi API endpoint mới không yêu cầu category_id
-    const response = await axios.get(
-      `${API_BASE_URL}/site/post?slug=${slug}&domain_id=${DOMAIN_ID}`
-    );
+    const response = await axios.get(`${API_URL}/site/post`, {
+      params: {
+        slug,
+        domain_id: DOMAIN_ID,
+      },
+    });
 
-    if (response.data && response.data.status && response.data.data) {
+    if (response.data?.status && response.data.data) {
+      console.log("✅ Fetched post data:", response.data.data);
       return response.data.data;
     }
+
     return null;
   } catch (error) {
     console.error(`Error fetching post with slug ${slug}:`, error);
@@ -55,12 +56,46 @@ export async function fetchPostBySlugOnly(
 }
 
 /**
- * Lấy bài viết mới nhất
+ * Lấy bài viết liên quan theo categoryId, loại trừ bài viết hiện tại
  */
-export async function getLatestPosts(limit: number = 5): Promise<LatestPost[]> {
+export async function getRelatedPosts(
+  categoryId: number,
+  excludeSlug: string,
+  limit: number = 5
+): Promise<RelatedPost[]> {
+  try {
+    const response = await axios.get(`${API_URL}/site/posts`, {
+      params: {
+        domain_id: DOMAIN_ID,
+        category_id: categoryId,
+        limit,
+      },
+    });
+
+    if (
+      response.data &&
+      response.data.status &&
+      response.data.data &&
+      Array.isArray(response.data.data.data)
+    ) {
+      return response.data.data.data.filter(
+        (post: PostType) => post.slug !== excludeSlug
+      );
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Error fetching related posts:", error);
+    return [];
+  }
+}
+/**
+ * Lấy danh sách slugs của tất cả bài viết để phục vụ Static Generation
+ */
+export async function getAllPostSlugs(limit: number = 100): Promise<string[]> {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/site/posts?limit=${limit}&page=1&sort_name=desc&sort_by=created_at&domain_id=${DOMAIN_ID}`
+      `${API_URL}/site/posts?limit=${limit}&page=1&sort_name=desc&sort_by=created_at&domain_id=${DOMAIN_ID}`
     );
 
     if (
@@ -69,41 +104,45 @@ export async function getLatestPosts(limit: number = 5): Promise<LatestPost[]> {
       response.data.data &&
       response.data.data.data
     ) {
-      return response.data.data.data;
+      return response.data.data.data
+        .map((post: PostType) =>
+          // Trả về đúng định dạng slug.html
+          post.slug ? `${post.slug}.html` : ""
+        )
+        .filter(Boolean);
     }
     return [];
   } catch (error) {
-    console.error("Error fetching latest posts:", error);
+    console.error("Error fetching post slugs:", error);
     return [];
   }
 }
 
 /**
- * Lấy các bài viết liên quan đến một category cụ thể
+ * Lấy danh sách bài viết mới nhất (cho sidebar hoặc trang chủ)
  */
-export async function getRelatedPostsByCategory(
-  categoryId: number,
-  limit: number = 6
-): Promise<LatestPost[]> {
+export async function getLatestPosts(limit: number = 5): Promise<PostType[]> {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}/site/category/${categoryId}/posts?limit=${limit}&page=1&domain_id=${DOMAIN_ID}`
-    );
+    const response = await axios.get(`${API_URL}/site/posts`, {
+      params: {
+        domain_id: DOMAIN_ID,
+        limit,
+        sort_by: "created_at",
+        sort_name: "desc",
+      },
+    });
 
     if (
-      response.data &&
-      response.data.status &&
-      response.data.data &&
-      response.data.data.data
+      response.data?.status &&
+      response.data.data?.data &&
+      Array.isArray(response.data.data.data)
     ) {
       return response.data.data.data;
     }
+
     return [];
   } catch (error) {
-    console.error(
-      `Error fetching related posts for category ${categoryId}:`,
-      error
-    );
+    console.error("❌ Error fetching latest posts:", error);
     return [];
   }
 }

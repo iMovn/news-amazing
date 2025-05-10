@@ -2,11 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatDateVi } from "@/utils/date";
-import { CategoryPost } from "../../components/types/CategoryRes";
 import DOMPurify from "isomorphic-dompurify";
 
 import { useEffect, useState } from "react";
 import { CalendarDays } from "lucide-react";
+import { CategoryDetail } from "../types/CategoryRes";
 
 function PostImage({ src, alt }: { src: string; alt: string }) {
   const [imgSrc, setImgSrc] = useState(src || "/img-default.jpg");
@@ -31,7 +31,7 @@ export default function PostCard({
   posts,
   categoryName,
 }: {
-  posts: CategoryPost[];
+  posts: CategoryDetail[];
   categoryName: string;
 }) {
   const [mounted, setMounted] = useState(false);

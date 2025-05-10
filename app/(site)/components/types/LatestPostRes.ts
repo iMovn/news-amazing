@@ -2,8 +2,10 @@ export interface LatestPost {
   id: number;
   name: string;
   slug: string;
+  image?: string;
   image_url: string;
   created_at: string;
+  description?: string | null;
   categories: {
     id: number;
     name: string;
@@ -13,10 +15,6 @@ export interface LatestPost {
       category_id: number;
     };
   }[];
-  users: {
-    id: number;
-    name: string;
-  };
 }
 
 export interface LatestPostResponse {

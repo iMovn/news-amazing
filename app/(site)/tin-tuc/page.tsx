@@ -1,8 +1,8 @@
 import axios from "axios";
-import Sidebar from "../[slug]/components/Sidebar";
-import PostCard from "../[slug]/components/PostCard";
 
 import { Metadata } from "next";
+import Sidebar from "../components/commons/Sidebar";
+import PostCard from "../components/commons/PostCard";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 

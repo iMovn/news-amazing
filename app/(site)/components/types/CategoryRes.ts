@@ -1,36 +1,17 @@
-import { Breadcrumb } from "./common/Breadcrumb";
+import { PostType } from "./PostRes";
 
 export interface Category {
   id: number;
   name: string;
   slug: string;
   is_active?: number;
-  parent_id?: number;
-  children?: Category[];
-  description?: string;
-  image_url?: string;
+  parent_id?: number | null;
   meta_title?: string;
   meta_description?: string;
+  description?: string;
   canonical?: string;
-}
-
-export interface CategoryPost {
-  id: number;
-  name: string;
-  slug: string;
-  created_at: string;
-  description: string;
-  image?: string;
   image_url?: string;
-  is_active: number;
-  categories: {
-    id: number;
-    name: string;
-    pivot: {
-      post_id: number;
-      category_id: number;
-    };
-  }[];
+  children?: Category[];
 }
 
 export interface PaginationLink {
@@ -39,31 +20,51 @@ export interface PaginationLink {
   active: boolean;
 }
 
-export interface PaginationMeta {
-  current_page: number;
-  from: number;
-  last_page: number;
-  per_page: number;
-  to: number;
-  total: number;
-  first_page_url: string;
-  last_page_url: string;
-  next_page_url: string | null;
-  prev_page_url: string | null;
-  path: string;
-  links: PaginationLink[];
+export interface CategoryDetail {
+  id: number;
+  name: string;
+  slug: string;
+  parent_id?: number | null;
+  description?: string;
+  meta_title?: string;
+  meta_description?: string;
+  canonical?: string;
+  image_url?: string;
+  created_at: string;
+  items?: {
+    data: PostType[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    links: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
+  };
+  breadcrumbs?: Array<{
+    name: string;
+    slug: string;
+    is_active: boolean;
+  }>;
 }
 
-export interface Pagination<T> {
-  data: T[];
-  meta: PaginationMeta;
-}
-
-export interface CategoryResponse {
-  categories: Category[]; // Danh sách tất cả danh mục
-  breadcrumbs: Breadcrumb[]; // Breadcrumb
-  details: Category; // Danh mục hiện tại
+export interface CategoryWithPosts {
+  details: CategoryDetail;
   items: {
-    data: CategoryPost[];
-  } & PaginationMeta; // Danh sách bài viết thuộc danh mục + phân trang
+    data: PostType[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    links: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
+  };
+  breadcrumbs: Array<{
+    name: string;
+    slug: string;
+    is_active: boolean;
+  }>;
 }
