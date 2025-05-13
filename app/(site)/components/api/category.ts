@@ -1,60 +1,53 @@
-import axios from "axios";
 import { Category } from "../types/CategoryRes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID || "";
 
-/**
- * Lấy tất cả danh mục
- */
+let cachedCategories: Category[] | null = null;
+let lastFetchTime = 0;
+
 export async function fetchAllCategories(): Promise<Category[]> {
+  const now = Date.now();
+  if (cachedCategories && now - lastFetchTime < 5 * 60 * 1000) {
+    return cachedCategories;
+  }
+
   try {
-    const response = await axios.get(
-      `${API_URL}/site/category?type=post&domain_id=${DOMAIN_ID}`
+    const res = await fetch(
+      `${API_URL}/site/category?type=post&domain_id=${DOMAIN_ID}`,
+      { next: { revalidate: 600 } }
     );
+    const data = await res.json();
 
-    if (
-      response.data &&
-      response.data.data &&
-      Array.isArray(response.data.data.categories)
-    ) {
-      return response.data.data.categories;
-    } else if (response.data && Array.isArray(response.data.data)) {
-      return response.data.data;
-    } else if (response.data && Array.isArray(response.data)) {
-      return response.data;
-    }
+    let result: Category[] = [];
+    if (Array.isArray(data.data?.categories)) result = data.data.categories;
+    else if (Array.isArray(data.data)) result = data.data;
+    else if (Array.isArray(data)) result = data;
 
-    return [];
+    cachedCategories = result;
+    lastFetchTime = now;
+
+    return result;
   } catch (error) {
     console.error("Error fetching all categories:", error);
     return [];
   }
 }
 
-/**
- * Lấy chi tiết danh mục theo slug kèm danh sách bài viết có phân trang
- */
 export async function fetchCategoryBySlug(slug: string, page: number = 1) {
   try {
-    const response = await axios.get(
-      `${API_URL}/site/category?type=post&domain_id=${DOMAIN_ID}&slug=${slug}&page=${page}`
+    const res = await fetch(
+      `${API_URL}/site/category?type=post&domain_id=${DOMAIN_ID}&slug=${slug}&page=${page}`,
+      { next: { revalidate: 300 } }
     );
-
-    if (response.data && response.data.data) {
-      return response.data.data;
-    }
-
-    return null;
+    const data = await res.json();
+    return data.data || null;
   } catch (error) {
     console.error(`Error fetching category by slug ${slug}:`, error);
     return null;
   }
 }
 
-/**
- * Lấy danh sách slugs của tất cả danh mục để phục vụ Static Generation
- */
 export async function getAllCategorySlugs(): Promise<string[]> {
   try {
     const categories = await fetchAllCategories();

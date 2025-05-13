@@ -1,63 +1,22 @@
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import dynamic from "next/dynamic";
-import { Metadata } from "next";
+import { formatDateVi } from "@/utils/date";
+import { CalendarDays, CircleUser } from "lucide-react";
 import {
   fetchAllCategories,
   fetchCategoryBySlug,
 } from "../components/api/category";
-import { fetchPostBySlugOnly, getLatestPosts } from "../components/api/post";
-import Breadcrumbs from "../components/layouts/Breadcrumbs";
-import Pagination from "../components/layouts/Pagination";
-import { formatDateVi } from "@/utils/date";
-import { CalendarDays, CircleUser } from "lucide-react";
-import { unstable_cache } from "next/cache";
-import { convertToLatestPosts } from "@/utils/postUtils";
+import { fetchPost, getLatestPosts } from "../components/api/post";
 import { PostType } from "../components/types/PostRes";
+import Breadcrumbs from "../components/layouts/Breadcrumbs";
+import Sidebar from "../components/commons/Sidebar";
+import PostCard from "../components/commons/PostCard";
+import Pagination from "../components/layouts/Pagination";
+import Post from "../components/commons/Post";
+import { Metadata } from "next";
 
-// Lazy load các components
-const Sidebar = dynamic(() => import("../components/commons/Sidebar"), {
-  loading: () => (
-    <div className="animate-pulse bg-gray-200 h-full w-full rounded"></div>
-  ),
-});
-const PostCard = dynamic(() => import("../components/commons/PostCard"));
-const PostComponent = dynamic(() => import("../components/commons/Post"));
+// Cấu hình ISR
+export const revalidate = 300; // cache 5 phút
 
-// Cache helpers
-const getCachedCategories = unstable_cache(
-  async () => fetchAllCategories(),
-  ["all-categories"],
-  { revalidate: 3600 }
-);
-
-const getCachedLatestPosts = unstable_cache(
-  async (count: number) => {
-    const posts = await getLatestPosts(count);
-    return convertToLatestPosts(posts);
-  },
-  ["latest-posts"],
-  { revalidate: 900 }
-);
-
-// const getCachedRelatedPosts = unstable_cache(
-//   async (categoryId: number, excludeSlug: string) => {
-//     return await getRelatedPosts(categoryId, excludeSlug);
-//   },
-//   ["related-posts"],
-//   { revalidate: 900 }
-// );
-
-// Cache bài viết theo slug với TTL 30 phút
-const getCachedPost = unstable_cache(
-  async (slug: string): Promise<PostType | null> => {
-    return await fetchPostBySlugOnly(slug);
-  },
-  ["post-by-slug"],
-  { revalidate: 1800 }
-);
-
-// Tạo metadata động
 export async function generateMetadata({
   params,
 }: {
@@ -66,75 +25,48 @@ export async function generateMetadata({
   const { slug } = params;
   const isPost = slug.endsWith(".html");
 
+  const categories = await fetchAllCategories();
+  if (!categories.length) return {};
+
   if (isPost) {
-    // Logic cho bài viết
     const cleanSlug = slug.replace(/\.html$/, "");
-    const postData = await getCachedPost(cleanSlug);
 
-    if (!postData)
-      return {
-        title: "Bài viết - Không tìm thấy",
-        description: "Bài viết không tồn tại",
-      };
-
-    return {
-      title: postData.meta_title || postData.name,
-      description: postData.meta_description || postData.description || "",
-      openGraph: {
-        title: postData.meta_title || postData.name,
-        description: postData.meta_description || postData.description || "",
-        url: postData.slug || "",
-        images: [
-          {
-            url: postData.image_url || "",
-            alt: postData.name || "",
+    for (const category of categories) {
+      const post = await fetchPost(cleanSlug, category.id);
+      if (post) {
+        return {
+          title: post.meta_title || post.name,
+          description: post.meta_description || post.description || "",
+          openGraph: {
+            title: post.meta_title || post.name,
+            description: post.meta_description || post.description || "",
+            images: [
+              {
+                url: post.image_url || "/default-og.jpg",
+              },
+            ],
           },
-        ],
-        type: "article",
-      },
-      alternates: {
-        canonical:
-          postData.canonical || `${process.env.NEXT_PUBLIC_URL}/${slug}`,
-      },
-    };
+        };
+      }
+    }
   } else {
-    // Logic cho danh mục
-    const categoryData = await unstable_cache(
-      async () => fetchCategoryBySlug(slug, 1),
-      [`category-${slug}-metadata`],
-      { revalidate: 1800 }
-    )();
-
-    if (!categoryData?.details)
+    const category = await fetchCategoryBySlug(slug);
+    if (category) {
       return {
-        title: "Danh mục - Không tìm thấy",
-        description: "Danh mục không tồn tại",
+        title: category.details.meta_title || category.details.name,
+        description: category.details.meta_description || "",
+        openGraph: {
+          title: category.details.meta_title || category.details.name,
+          description: category.details.meta_description || "",
+        },
       };
-
-    return {
-      title: categoryData.details.meta_title || categoryData.details.name,
-      description:
-        categoryData.details.meta_description ||
-        categoryData.details.description,
-      openGraph: {
-        title: categoryData.details.name || "",
-        description: categoryData.details.description || "",
-        url: categoryData.details.slug || "",
-        images: [
-          {
-            url: categoryData.details.image_url || "",
-            alt: categoryData.details.name || "",
-          },
-        ],
-        type: "website",
-      },
-      alternates: {
-        canonical:
-          categoryData.details.canonical ||
-          `${process.env.NEXT_PUBLIC_URL}/${slug}`,
-      },
-    };
+    }
   }
+
+  return {
+    title: "Không tìm thấy nội dung",
+    description: "Nội dung không tồn tại hoặc đã bị xóa.",
+  };
 }
 
 export default async function SlugPage({
@@ -148,20 +80,25 @@ export default async function SlugPage({
   const page = Number(searchParams.page || 1);
   const isPost = slug.endsWith(".html");
 
-  // Tải song song dữ liệu chung
-  const [categories, latestPosts] = await Promise.all([
-    getCachedCategories(),
-    getCachedLatestPosts(5),
-  ]);
+  const categories = await fetchAllCategories();
+  const latestPosts = await getLatestPosts(5);
 
   if (!categories.length) return notFound();
 
-  // RENDER POST
   if (isPost) {
     const cleanSlug = slug.replace(/\.html$/, "");
+    let postData: PostType | null = null;
 
-    // Lấy dữ liệu bài viết - related_posts đã có sẵn trong response từ API
-    const postData = await getCachedPost(cleanSlug);
+    for (const category of categories) {
+      const tempPost = await fetchPost(cleanSlug, category.id);
+      if (tempPost) {
+        const realCategoryId = tempPost.categories?.[0]?.id;
+        postData = realCategoryId
+          ? await fetchPost(cleanSlug, realCategoryId)
+          : tempPost;
+        break;
+      }
+    }
 
     if (!postData) return notFound();
 
@@ -175,54 +112,35 @@ export default async function SlugPage({
             }')`,
           }}
         >
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 transition-transform z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 z-0"></div>
           <div className="container mx-auto relative text-white z-10">
-            <Breadcrumbs items={postData.breadcrumbs || []} />
+            <Breadcrumbs items={postData.breadcrumbs} />
             <h1 className="text-xl md:text-2xl font-bold">{postData.name}</h1>
             <div className="author-date flex items-center gap-3">
               <span className="flex items-center gap-1 text-sm text-gray-100">
-                <CalendarDays size="15px" color="#E59B17" />{" "}
+                <CalendarDays size="15px" color="#E59B17" />
                 {formatDateVi(postData.created_at)}
               </span>
               <span className="flex items-center gap-1 text-sm text-gray-100">
-                <CircleUser size="15px" color="#E59B17" />{" "}
-                {postData.users?.name || "Admin"}
+                <CircleUser size="15px" color="#E59B17" />
+                {postData.users?.name}
               </span>
             </div>
           </div>
         </section>
         <div className="container mx-auto flex flex-col-reverse md:flex-row gap-10 py-10">
           <aside className="md:w-[25%] w-full">
-            <Suspense
-              fallback={
-                <div className="h-64 bg-gray-200 animate-pulse rounded"></div>
-              }
-            >
-              <Sidebar categories={categories} latestPosts={latestPosts} />
-            </Suspense>
+            <Sidebar categories={categories} latestPosts={latestPosts} />
           </aside>
           <main className="md:w-[75%] w-full">
-            <Suspense
-              fallback={
-                <div className="h-96 bg-gray-200 animate-pulse rounded"></div>
-              }
-            >
-              <PostComponent post={postData} />
-            </Suspense>
+            <Post post={postData} />
           </main>
         </div>
       </>
     );
   }
 
-  // RENDER CATEGORY
-  const categoryData = await unstable_cache(
-    async () => fetchCategoryBySlug(slug, page),
-    [`category-${slug}-page-${page}`],
-    { revalidate: 1800 }
-  )();
-
+  const categoryData = await fetchCategoryBySlug(slug, page);
   if (!categoryData?.items?.data) return notFound();
 
   return (
@@ -231,8 +149,7 @@ export default async function SlugPage({
         className="relative w-full bg-cover md:bg-left-bottom bg-left-top py-[59px] z-0"
         style={{ backgroundImage: "url('/images/bg-head.jpg')" }}
       >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 transition-transform z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 z-0"></div>
         <div className="container mx-auto relative text-white z-10">
           <Breadcrumbs items={categoryData.breadcrumbs} />
           <h1 className="text-xl md:text-2xl font-bold">
@@ -242,28 +159,221 @@ export default async function SlugPage({
       </section>
       <div className="container mx-auto flex flex-col-reverse md:flex-row gap-12 py-10">
         <aside className="md:w-[25%] w-full">
-          <Suspense
-            fallback={
-              <div className="h-64 bg-gray-200 animate-pulse rounded"></div>
-            }
-          >
-            <Sidebar categories={categories} latestPosts={latestPosts} />
-          </Suspense>
+          <Sidebar categories={categories} />
         </aside>
         <main className="md:w-[75%] w-full space-y-6">
-          <Suspense
-            fallback={
-              <div className="h-96 bg-gray-200 animate-pulse rounded"></div>
-            }
-          >
-            <PostCard
-              posts={categoryData.items.data}
-              categoryName={categoryData.details.name || ""}
-            />
-            <Pagination links={categoryData.items.links} />
-          </Suspense>
+          <PostCard
+            posts={categoryData.items.data}
+            categoryName={categoryData.details.name || ""}
+          />
+          <Pagination links={categoryData.items.links} />
         </main>
       </div>
     </>
   );
 }
+
+// import { notFound } from "next/navigation";
+// import {
+//   fetchAllCategories,
+//   fetchCategoryBySlug,
+// } from "../components/api/category";
+// import { fetchPost, getLatestPosts } from "../components/api/post";
+// import Breadcrumbs from "../components/layouts/Breadcrumbs";
+// import Pagination from "../components/layouts/Pagination";
+// import { PostType } from "../components/types/PostRes";
+// import { formatDateVi } from "@/utils/date";
+// import { CalendarDays, CircleUser } from "lucide-react";
+// import { Metadata } from "next";
+// import Sidebar from "../components/commons/Sidebar";
+// import PostCard from "../components/commons/PostCard";
+// import Post from "../components/commons/Post";
+
+// // 🧠 SEO metadata động cho từng slug
+// export async function generateMetadata({
+//   params,
+// }: {
+//   params: { slug: string };
+// }): Promise<Metadata> {
+//   const { slug } = params;
+//   const isPost = slug.endsWith(".html");
+//   const categories = await fetchAllCategories();
+
+//   if (!categories.length) return {};
+
+//   if (isPost) {
+//     const cleanSlug = slug.replace(/\.html$/, "");
+//     let postData: PostType | null = null;
+
+//     for (const category of categories) {
+//       const tempPost = await fetchPost(cleanSlug, category.id);
+//       if (tempPost) {
+//         const realCategoryId = tempPost.categories?.[0]?.id;
+//         postData = realCategoryId
+//           ? await fetchPost(cleanSlug, realCategoryId)
+//           : tempPost;
+//         break;
+//       }
+//     }
+
+//     if (!postData) return {};
+
+//     return {
+//       title: postData.meta_title || postData.name,
+//       description: postData.meta_description || postData.description,
+//       openGraph: {
+//         title: postData.meta_title || postData.name,
+//         description: postData.meta_description || postData.description,
+//         url: postData.slug || "",
+//         images: [
+//           {
+//             url: postData.image_url || "",
+//             alt: postData.name || "",
+//           },
+//         ],
+//         type: "article",
+//       },
+//       alternates: {
+//         canonical:
+//           postData.canonical || `${process.env.NEXT_PUBLIC_URL}/${slug}`,
+//       },
+//     };
+//   }
+
+//   const categoryData = await fetchCategoryBySlug(slug, 1);
+//   if (!categoryData?.details) return {};
+
+//   return {
+//     title: categoryData.details.meta_title || categoryData.details.name,
+//     description:
+//       categoryData.details.meta_description || categoryData.details.description,
+//     openGraph: {
+//       title: categoryData.details.name || "",
+//       description: categoryData.details.description || "",
+//       url: categoryData.details.slug || "",
+//       images: [
+//         {
+//           url: categoryData.details.image_url || "",
+//           alt: categoryData.details.name || "",
+//         },
+//       ],
+//       type: "website",
+//     },
+//     alternates: {
+//       canonical:
+//         categoryData.details.canonical ||
+//         `${process.env.NEXT_PUBLIC_URL}/${slug}`,
+//     },
+//   };
+// }
+
+// export default async function SlugPage({
+//   params,
+//   searchParams,
+// }: {
+//   params: { slug: string };
+//   searchParams: { page?: string };
+// }) {
+//   const { slug } = params;
+//   const page = Number(searchParams.page || 1);
+//   const isPost = slug.endsWith(".html");
+//   const categories = await fetchAllCategories();
+//   const latestPosts = await getLatestPosts(5); // Lấy 5 bài viết mới nhất
+
+//   if (!categories.length) return notFound();
+
+//   // IN POSTS
+//   if (isPost) {
+//     const cleanSlug = slug.replace(/\.html$/, "");
+//     // const postData = await fetchPost(slug, categories);
+
+//     let postData: PostType | null = null;
+
+//     for (const category of categories) {
+//       const tempPost = await fetchPost(cleanSlug, category.id);
+//       if (tempPost) {
+//         const realCategoryId = tempPost.categories?.[0]?.id;
+
+//         if (!realCategoryId) {
+//           postData = tempPost;
+//         } else {
+//           postData = await fetchPost(cleanSlug, realCategoryId);
+//         }
+//         break;
+//       }
+//     }
+
+//     if (!postData) return notFound();
+//     return (
+//       <>
+//         <section
+//           className="relative w-full bg-cover md:bg-center bg-left-top py-12 z-0"
+//           style={{
+//             backgroundImage: `url('${
+//               postData.image_url || "/img-default.jpg"
+//             }')`,
+//           }}
+//         >
+//           {/* Overlay */}
+//           <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 transition-transform z-0"></div>
+//           <div className="container mx-auto relative text-white z-10">
+//             <Breadcrumbs items={postData.breadcrumbs} />
+//             <h1 className="text-xl md:text-2xl font-bold">{postData.name}</h1>
+//             <div className="author-date flex items-center gap-3">
+//               <span className="flex items-center gap-1 text-sm text-gray-100">
+//                 <CalendarDays size="15px" color="#E59B17" />{" "}
+//                 {formatDateVi(postData.created_at)}
+//               </span>
+//               <span className="flex items-center gap-1 text-sm text-gray-100">
+//                 <CircleUser size="15px" color="#E59B17" />{" "}
+//                 {postData.users?.name}
+//               </span>
+//             </div>
+//           </div>
+//         </section>
+//         <div className="container mx-auto flex flex-col-reverse md:flex-row gap-10 py-10">
+//           <aside className="md:w-[25%] w-full">
+//             <Sidebar categories={categories} latestPosts={latestPosts} />
+//           </aside>
+//           <main className="md:w-[75%] w-full">
+//             <Post post={postData} />
+//           </main>
+//         </div>
+//       </>
+//     );
+//   }
+
+//   // IN CATEGOGIES TYPE POST
+//   const categoryData = await fetchCategoryBySlug(slug, page);
+//   if (!categoryData?.items?.data) return notFound();
+
+//   return (
+//     <>
+//       <section
+//         className="relative w-full bg-cover md:bg-left-bottom bg-left-top py-[59px] z-0"
+//         style={{ backgroundImage: "url('/images/bg-head.jpg')" }}
+//       >
+//         {/* Overlay */}
+//         <div className="absolute inset-0 bg-gradient-to-r from-[#40c543]/90 to-[#76c5c4]/70 transition-transform z-0"></div>
+//         <div className="container mx-auto relative text-white z-10">
+//           <Breadcrumbs items={categoryData.breadcrumbs} />
+//           <h1 className="text-xl md:text-2xl font-bold">
+//             {categoryData.details.name || "Danh mục"}
+//           </h1>
+//         </div>
+//       </section>
+//       <div className="container mx-auto flex flex-col-reverse md:flex-row gap-12 py-10">
+//         <aside className="md:w-[25%] w-full">
+//           <Sidebar categories={categories} />
+//         </aside>
+//         <main className="md:w-[75%] w-full space-y-6">
+//           <PostCard
+//             posts={categoryData.items.data}
+//             categoryName={categoryData.details.name || ""}
+//           />
+//           <Pagination links={categoryData.items.links} />
+//         </main>
+//       </div>
+//     </>
+//   );
+// }
