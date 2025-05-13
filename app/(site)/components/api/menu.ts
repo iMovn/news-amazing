@@ -18,3 +18,18 @@ export async function fetchMenu(): Promise<MenuItem[]> {
     return []; // Trả về mảng rỗng nếu lỗi
   }
 }
+
+export async function fetchMenuFt(): Promise<MenuItem[]> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/site/menu?type=footer&domain_id=${DOMAIN_ID}`
+    );
+    if (!res.ok) throw new Error("Lỗi khi lấy menu footer");
+
+    const { data } = await res.json();
+    return data as MenuItem[]; // Ép kiểu dữ liệu về MenuItem[]
+  } catch (error) {
+    console.error("Lỗi API Menu:", error);
+    return []; // Trả về mảng rỗng nếu lỗi
+  }
+}

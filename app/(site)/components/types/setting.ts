@@ -36,6 +36,9 @@ export interface Company {
   website: string;
   instagram: string;
   link_icon: string;
+  link_map: string;
+  iframe_facebook: string;
+  link_google_business: string;
   map: string;
 }
 

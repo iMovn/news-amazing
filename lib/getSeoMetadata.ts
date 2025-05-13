@@ -16,6 +16,7 @@ export async function getSeoMetadata() {
 
   const seo = json.data?.seo || {};
   const favicon = json.data?.favicon || "/favicon.ico";
+  const logo = json.data?.logo || "/favicon.ico";
 
   return {
     title: seo?.meta_title || "",
@@ -33,7 +34,7 @@ export async function getSeoMetadata() {
       siteName: seo?.meta_og_site_name || "",
       images: [
         {
-          url: seo?.meta_og_image || "",
+          url: logo?.logo || "",
           alt: seo?.meta_og_image_alt || "",
         },
       ],

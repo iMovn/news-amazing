@@ -25,7 +25,7 @@ export default function TopBar() {
         </h3>
         <div className="md:flex hidden space-x-4">
           <Link
-            href="https://maps.app.goo.gl/hMviSLvoW26xicze8"
+            href={`${settings?.company.link_map || ""}`}
             target="_blank"
             rel="nofollow"
             className="flex gap-x-1 items-center hover:text-secondary_layout"
@@ -49,7 +49,12 @@ export default function TopBar() {
             <Mail size="16px" /> {settings?.company.email || ""}
           </Link>
           <div className="flex items-center gap-x-1">
-            <Link href="#" className="hover:text-secondary_layout">
+            <Link
+              href={`${settings?.company.fanpage}`}
+              className="hover:text-secondary_layout"
+              target="_blank"
+              rel="nofollow"
+            >
               <Facebook size="16px" />
             </Link>
             <Link href="#" className="hover:text-secondary_layout">

@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, latestPosts = [] }) => {
               <li key={category.id}>
                 <Link
                   href={`/${category.slug}`}
-                  className="text-gray-700 hover:text-green-600 transition-colors block py-1"
+                  className="text-gray-700 hover:text-green-600 transition-colors block"
                 >
                   {category.name}
                 </Link>

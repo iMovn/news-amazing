@@ -35,15 +35,15 @@ export default function RelatedPostsClientSide({ post }: RelatedPostsProps) {
                     />
                   </div>
                   <div className="p-3">
-                    <h3 className="font-medium text-gray-800 line-clamp-2 hover:text-green-600 transition-colors">
+                    <h3 className="font-medium text-base text-gray-800 line-clamp-2 hover:text-green-600 transition-colors">
                       {related.name}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {related.categories && related.categories[0]?.name && (
+                      {/* {related.categories && related.categories[0]?.name && (
                         <span className="inline-block px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded-full">
                           {related.categories[0].name}
                         </span>
-                      )}
+                      )} */}
                       <span className="text-xs text-gray-500">
                         {formatDateVi(related.created_at)}
                       </span>
