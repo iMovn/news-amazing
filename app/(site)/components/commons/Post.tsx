@@ -1,4 +1,5 @@
 // components/commons/Post.tsx
+// components/commons/Post.tsx
 "use client";
 
 import DOMPurify from "isomorphic-dompurify";
@@ -6,7 +7,7 @@ import { insertTocToContent } from "@/utils/insertToc";
 import { processContent } from "@/utils/contentProcessor";
 import { PostType } from "../types/PostRes";
 import RelatedPostsClientSide from "./RelatedPostsClientSide";
-import { useEffect, useRef, useState, useCallback } from "react"; // Thêm useCallback
+import { useEffect, useRef, useState, useCallback } from "react";
 import PostImage from "./PostImage";
 import { createRoot } from "react-dom/client";
 
@@ -26,8 +27,8 @@ export default function Post({ post }: PostProps) {
     : "";
 
   // Xử lý nội dung để tối ưu hóa hình ảnh và iframe
-  // Chú ý: processContent phải được định nghĩa trong utils/contentProcessor.ts
-  const optimizedContent = processContent(contentWithToc);
+  // Truyền cả post để có thể xử lý video từ API
+  const optimizedContent = processContent(contentWithToc, post);
 
   // Định nghĩa hàm xử lý khi click vào container video
   // Sử dụng useCallback để tối ưu hiệu năng và tránh tạo lại function mỗi lần render
@@ -43,7 +44,7 @@ export default function Post({ post }: PostProps) {
       <iframe 
         width="100%" 
         height="100%" 
-        src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+        src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" 
         title="YouTube video player" 
         frameborder="0" 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -238,35 +239,6 @@ export default function Post({ post }: PostProps) {
       /* Class được thêm vào khi hình ảnh đã load xong */
       .post-image-container img.opacity-100 {
         opacity: 1;
-      }
-      
-      /* Thêm styles chung cho video containers */
-      .video-container {
-        cursor: pointer;
-        position: relative;
-      }
-      
-      .video-container:hover::after {
-        opacity: 0.7;
-      }
-      
-      .video-container::after {
-        content: "▶";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 48px;
-        color: white;
-        background: rgba(0,0,0,0.5);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.5;
-        transition: opacity 0.3s ease;
       }
     `;
     document.head.appendChild(style);

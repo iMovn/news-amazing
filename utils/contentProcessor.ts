@@ -1,22 +1,45 @@
 // utils/contentProcessor.ts
+import { PostType } from "@/app/(site)/components/types/PostRes";
+
 // Biểu thức chính quy để tìm và xử lý hình ảnh
 const IMG_REGEX = /<img\s+[^>]*src="([^"]+)"[^>]*>/gi;
 const IFRAME_REGEX = /<iframe\s+[^>]*src="([^"]+)"[^>]*>/gi;
+const YOUTUBE_URL_REGEX =
+  /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
 
 /**
- * Kiểm tra xem URL hình ảnh có phải là hình ảnh quan trọng không
- * @param src URL của hình ảnh
- * @returns true nếu là hình ảnh quan trọng
+ * Trích xuất video ID từ URL YouTube
+ * @param url URL YouTube
+ * @returns Video ID hoặc null nếu không phải URL YouTube hợp lệ
  */
-function isImportantImage(src: string): boolean {
-  // Hình ảnh quan trọng thường là hình ảnh lớn hoặc đầu tiên
-  // Bạn có thể tùy chỉnh logic này theo nhu cầu
-  return (
-    src.includes("featured") ||
-    src.includes("hero") ||
-    src.includes("banner") ||
-    src.includes("large")
-  );
+export function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+
+  const match = url.match(YOUTUBE_URL_REGEX);
+  return match ? match[1] : null;
+}
+
+/**
+ * Tạo HTML cho video container
+ * @param videoId ID của video YouTube
+ * @returns HTML string cho video container
+ */
+export function createYouTubeHTML(videoId: string): string {
+  return `
+    <div class="video-container" data-video-id="${videoId}">
+      <img 
+        src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
+        alt="YouTube video thumbnail" 
+        class="video-thumbnail" 
+        loading="lazy"
+        onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'"
+      />
+      <div class="youtube-play-button">
+        <div class="youtube-play-button-bg"></div>
+        <div class="youtube-play-button-icon"></div>
+      </div>
+    </div>
+  `;
 }
 
 /**
@@ -27,13 +50,8 @@ function isImportantImage(src: string): boolean {
 export function optimizeImages(htmlContent: string): string {
   if (!htmlContent) return "";
 
-  // Biến đếm số hình ảnh đã xử lý
-  let imageCount = 0;
-
   // Thay thế các thẻ img bằng phiên bản tối ưu hóa
   return htmlContent.replace(IMG_REGEX, (match, src) => {
-    imageCount++;
-
     // Lấy các thuộc tính từ thẻ img gốc
     const altMatch = match.match(/alt="([^"]+)"/i);
     const alt = altMatch ? altMatch[1] : "";
@@ -48,7 +66,7 @@ export function optimizeImages(htmlContent: string): string {
     const className = classMatch ? classMatch[1] : "";
 
     // Xác định nếu đây là hình ảnh quan trọng (hình đầu tiên hoặc hình lớn)
-    const isImportant = imageCount === 1 || isImportantImage(src);
+    const isImportant = width && parseInt(width) > 600;
 
     // Đối với hình ảnh quan trọng, sử dụng component PostImage
     if (isImportant) {
@@ -89,16 +107,6 @@ export function optimizeIframes(htmlContent: string): string {
 
   // Thay thế các thẻ iframe bằng phiên bản tối ưu hóa
   return htmlContent.replace(IFRAME_REGEX, (match, src) => {
-    // Lấy các thuộc tính từ thẻ iframe gốc
-    const widthMatch = match.match(/width="([^"]+)"/i);
-    const width = widthMatch ? widthMatch[1] : "100%";
-
-    const heightMatch = match.match(/height="([^"]+)"/i);
-    const height = heightMatch ? heightMatch[1] : "315";
-
-    const titleMatch = match.match(/title="([^"]+)"/i);
-    const title = titleMatch ? titleMatch[1] : "";
-
     // Thay thế iframe YouTube bằng phiên bản nhẹ hơn với thumbnail
     if (src.includes("youtube.com") || src.includes("youtu.be")) {
       // Lấy ID video từ URL YouTube
@@ -114,23 +122,8 @@ export function optimizeIframes(htmlContent: string): string {
       }
 
       if (videoId) {
-        // Tạo container lazy load cho video YouTube
-        return `<div class="video-container" data-video-id="${videoId}">
-          <div class="video-placeholder">
-            <img 
-              src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" 
-              alt="YouTube video thumbnail" 
-              class="video-thumbnail" 
-              loading="lazy"
-            />
-            <div class="video-play-button">
-              <svg viewBox="0 0 24 24" width="64" height="64">
-                <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.5)"/>
-                <path d="M10 8l6 4-6 4V8z" fill="white"/>
-              </svg>
-            </div>
-          </div>
-        </div>`;
+        // Tạo container tối ưu cho video YouTube
+        return createYouTubeHTML(videoId);
       }
     }
 
@@ -140,11 +133,12 @@ export function optimizeIframes(htmlContent: string): string {
 }
 
 /**
- * Xử lý toàn bộ nội dung HTML
+ * Xử lý toàn bộ nội dung HTML và thêm video nếu có
  * @param htmlContent Nội dung HTML cần xử lý
+ * @param post Dữ liệu bài viết có thể chứa URL video
  * @returns Nội dung HTML đã được tối ưu hóa
  */
-export function processContent(htmlContent: string): string {
+export function processContent(htmlContent: string, post?: PostType): string {
   if (!htmlContent) return "";
 
   // Áp dụng tất cả các bước tối ưu hóa
@@ -156,76 +150,131 @@ export function processContent(htmlContent: string): string {
   // Tối ưu iframe
   processedContent = optimizeIframes(processedContent);
 
+  // Thêm video từ post nếu có
+  if (post?.video) {
+    const videoId = extractYouTubeId(post.video);
+    if (videoId) {
+      // Thêm video vào đầu hoặc cuối nội dung tùy theo nhu cầu
+      // Ở đây tôi thêm vào đầu nội dung, sau các thẻ p đầu tiên (nếu có)
+      const firstParagraphEnd = processedContent.indexOf("</p>");
+      if (firstParagraphEnd !== -1) {
+        const insertPosition = firstParagraphEnd + 4; // sau thẻ </p>
+        processedContent =
+          processedContent.substring(0, insertPosition) +
+          `<div class="my-6">${createYouTubeHTML(videoId)}</div>` +
+          processedContent.substring(insertPosition);
+      } else {
+        // Nếu không tìm thấy thẻ p, thêm vào đầu
+        processedContent =
+          `<div class="my-6">${createYouTubeHTML(videoId)}</div>` +
+          processedContent;
+      }
+    }
+  }
+
   // Thêm các CSS styles cần thiết
   processedContent = `<style>
-    .image-wrapper {
-      position: relative;
-      margin: 1rem 0;
-      overflow: hidden;
-    }
-    .image-placeholder {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #f0f0f0;
-      animation: pulse 1.5s ease-in-out 0.5s infinite;
-    }
-    .content-image {
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-    .content-image.loaded {
-      opacity: 1;
-    }
-    .post-image-placeholder {
-      position: relative;
-      width: 100%;
-      height: 0;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
-      background-color: #f0f0f0;
-      animation: pulse 1.5s ease-in-out 0.5s infinite;
-      margin: 1rem 0;
-    }
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 */
-      height: 0;
-      overflow: hidden;
-      margin: 1rem 0;
-      cursor: pointer;
-    }
-    .video-placeholder {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .video-thumbnail {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .video-play-button {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      transition: transform 0.2s ease-in-out;
-    }
-    .video-container:hover .video-play-button {
-      transform: translate(-50%, -50%) scale(1.1);
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-  </style>${processedContent}`;
+  /* Styles chung cho containers */
+  .image-wrapper {
+    position: relative;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+  .image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    animation: pulse 1.5s ease-in-out 0.5s infinite;
+  }
+  .content-image {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .content-image.loaded {
+    opacity: 1;
+  }
+  .post-image-placeholder {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    background-color: #f0f0f0;
+    animation: pulse 1.5s ease-in-out 0.5s infinite;
+    margin: 1rem 0;
+  }
+  
+  /* Video container styles */
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    margin: 1rem 0;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .video-thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .video-container:hover .video-thumbnail {
+    transform: scale(1.05);
+  }
+  
+  /* YouTube play button styling */
+  .youtube-play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  
+  .youtube-play-button-bg {
+    width: 70px;
+    height: 70px;
+    background-color: rgba(200, 0, 0, 0.8);
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .video-container:hover .youtube-play-button-bg {
+    background-color: rgba(220, 0, 0, 1);
+    transform: scale(1.1);
+  }
+  
+  .youtube-play-button-icon {
+    position: absolute;
+    top: 50%;
+    left: 53%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 0 15px 26px;
+    border-color: transparent transparent transparent white;
+  }
+  
+  /* Animation styles */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+</style>${processedContent}`;
 
   return processedContent;
 }

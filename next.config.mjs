@@ -7,6 +7,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'api.shenlong.cloud',
             },
+            {
+                protocol: 'https',
+                hostname: 'img.youtube.com',
+            },
         ],
     },
 };

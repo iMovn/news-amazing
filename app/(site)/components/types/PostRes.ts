@@ -37,6 +37,7 @@ export interface PostType {
   description?: string;
   content: string;
   image?: string;
+  video?: string;
   image_url?: string;
   created_at: string;
   updated_at?: string;
