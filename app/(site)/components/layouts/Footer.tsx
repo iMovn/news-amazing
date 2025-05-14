@@ -3,37 +3,28 @@
 import React, { useEffect, useState } from "react";
 import { Facebook, Instagram, Mail, Phone } from "lucide-react";
 import Link from "next/link";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Image from "next/image";
 import { SettingsData } from "../types/setting";
 import { fetchSiteSettings } from "../api/settings";
-import axios from "axios";
 import { PostType } from "../types/PostRes";
 import { fetchMenuFt } from "../api/menu";
 import { MenuItem } from "../types/MenuRes";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
-
-const galleryImages = [
-  "/images/portfolio1.jpg",
-  "/images/portfolio2.jpg",
-  "/images/portfolio3.jpg",
-  "/images/portfolio4.jpg",
-  "/images/portfolio5.jpg",
-  "/images/portfolio6.jpg",
-  "/images/portfolio7.jpg",
-  "/images/portfolio8.jpg",
-  "/images/portfolio9.jpg",
-];
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
+import { fetchGalleryNewsFt, fetchLastNewsFt } from "../api/footer";
 
 export default function Footer() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsData | null>(null);
   const [lastNews, setLastNews] = useState<PostType[]>([]);
+  const [galleryNews, setGalleryNews] = useState<PostType[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  // fetch settings
   useEffect(() => {
     const getSettings = async () => {
       const data = await fetchSiteSettings();
@@ -42,22 +33,24 @@ export default function Footer() {
     getSettings();
   }, []);
 
-  // fetch bài viết mới
+  // Fetch bài viết mới (5 bài)
   useEffect(() => {
     const fetchLastNews = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/site/posts?domain_id=${DOMAIN_ID}&limit=4`
-        );
-        setLastNews(res.data.data.data);
-      } catch (error) {
-        console.error("Error fetching last news:", error);
-      }
+      const data = await fetchLastNewsFt();
+      setLastNews(data);
     };
     fetchLastNews();
   }, []);
 
-  // fetch menu footer
+  // Fetch bài viết mới (12 bài)
+  useEffect(() => {
+    const fetchGalleryNews = async () => {
+      const data = await fetchGalleryNewsFt();
+      setGalleryNews(data);
+    };
+    fetchGalleryNews();
+  }, []);
+
   useEffect(() => {
     const getMenu = async () => {
       const data = await fetchMenuFt();
@@ -81,7 +74,7 @@ export default function Footer() {
           <ul className="list-disc text-sm text-gray-600 space-y-1 ml-5">
             <li>
               <Link
-                href={`${settings?.company.link_map}`}
+                href={settings?.company.link_map || "#"}
                 target="_blank"
                 rel="nofollow"
                 className="hover:text-hover_layout"
@@ -139,7 +132,8 @@ export default function Footer() {
                 >
                   <Image
                     src={news.image_url || "/img-default.jpg"}
-                    alt={news.name}
+                    alt={news.name || "Post Image"}
+                    loading="lazy"
                     width={100}
                     height={100}
                     className="w-12 h-12 object-cover rounded"
@@ -176,30 +170,16 @@ export default function Footer() {
         {/* Gallery */}
         <div>
           <h3 className="text-lg font-extrabold mb-3 uppercase text-primary_layout">
-            Ảnh đẹp
+            Thư viện ảnh
           </h3>
           <Divider />
           <div className="grid grid-cols-3 gap-2">
-            {galleryImages.map((img) => (
-              <Dialog key={img}>
-                <DialogTrigger asChild>
-                  <Image
-                    src={img}
-                    alt="gallery-ft"
-                    width={100}
-                    height={100}
-                    className="w-full h-16 object-cover rounded cursor-pointer"
-                    onClick={() => setSelectedImage(img)}
-                  />
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl p-0 bg-transparent border-none shadow-none">
-                  <Image
-                    src={selectedImage ?? img}
-                    alt="preview"
-                    className="w-full h-auto rounded"
-                  />
-                </DialogContent>
-              </Dialog>
+            {galleryNews.map((news) => (
+              <GalleryImage
+                key={news.id}
+                src={news.image_url}
+                alt={news.name}
+              />
             ))}
           </div>
         </div>
@@ -208,21 +188,21 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="mt-12 p-3 text-center text-sm text-white bg-primary_layout">
         <p>
-          © {new Date().getFullYear()} All Rights Reserved. Bản quyền thuộc về
-          HEPF
+          © {new Date().getFullYear()} All Rights Reserved.{" "}
+          {settings?.company.copyright}
         </p>
       </div>
     </footer>
   );
 }
 
-// Tách divider ra component phụ
+// Tách Divider component
 function Divider() {
   return (
     <div className="relative flex mb-4">
       <Image
-        src={"/images/divide.jpg"}
-        alt="divi"
+        src="/images/divide.jpg"
+        alt="divider"
         width={506}
         height={506}
         loading="lazy"
@@ -230,5 +210,39 @@ function Divider() {
         className="max-w-[50px] max-h-[50px]"
       />
     </div>
+  );
+}
+
+// Tách GalleryImage để fix lỗi Dialog lặp ảnh
+function GalleryImage({ src, alt }: { src?: string; alt?: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Image
+          src={src || "/img-default.jpg"}
+          alt={alt || "gallery-ft"}
+          width={100}
+          height={100}
+          className="w-full h-16 object-cover rounded cursor-pointer"
+        />
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl p-0 bg-transparent border-none shadow-none">
+        <DialogTitle>
+          <VisuallyHidden>Ảnh xem chi tiết</VisuallyHidden>
+        </DialogTitle>
+        <DialogDescription>
+          <VisuallyHidden>Hình ảnh mở rộng từ thư viện bài viết</VisuallyHidden>
+        </DialogDescription>
+        <Image
+          src={src || "/img-default.jpg"}
+          alt={alt || "gallery-ft"}
+          width={800}
+          height={600}
+          className="w-full h-auto rounded"
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -12,15 +12,15 @@ function PostImage({ src, alt }: { src: string; alt: string }) {
   const [imgSrc, setImgSrc] = useState(src || "/img-default.jpg");
 
   return (
-    <div className="relative">
+    <div className="relative w-full h-[170px] rounded-t-xl overflow-hidden">
       <Image
         src={imgSrc}
         alt={alt}
-        width={256}
-        height={180}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        style={{ objectFit: "cover" }}
+        className="object-cover group-hover:scale-105 transition-transform duration-300"
         loading="lazy"
-        quality={100}
-        className="w-full h-auto object-cover"
         onError={() => setImgSrc("/img-default.jpg")}
       />
     </div>
@@ -54,7 +54,7 @@ export default function PostCard({
       {posts.map((post) => (
         <div
           key={post.id}
-          className="group border-[1px] rounded-md p-4 shadow-sm border-b-4 border-b-primary_layout"
+          className="group shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden bg-white"
         >
           <Link href={`/${post.slug}.html`}>
             <PostImage
@@ -62,23 +62,25 @@ export default function PostCard({
               alt={post.slug}
             />
           </Link>
-          <p className="flex items-center gap-1 text-xs text-gray-500 mt-3">
-            <CalendarDays size="14px" color="#9CC900" />{" "}
-            {formatDateVi(post.created_at)}
-          </p>
-          <Link href={`/${post.slug}.html`}>
-            <h3 className="font-semibold text-lg mt-2 leading-6 group-hover:text-hover_layout">
-              {post.name}
-            </h3>
-          </Link>
-          {mounted && (
-            <p
-              className="text-sm text-gray-600 mt-1 line-clamp-3"
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(post.description || ""),
-              }}
-            />
-          )}
+          <div className="px-4 pb-4">
+            <p className="flex items-center gap-1 text-xs text-gray-500 mt-3">
+              <CalendarDays size="14px" color="#9CC900" />{" "}
+              {formatDateVi(post.created_at)}
+            </p>
+            <Link href={`/${post.slug}.html`}>
+              <h3 className="font-semibold line-clamp-2 text-lg mt-2 leading-6 group-hover:text-hover_layout">
+                {post.name}
+              </h3>
+            </Link>
+            {mounted && (
+              <p
+                className="text-sm text-gray-600 mt-1 line-clamp-3"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(post.description || ""),
+                }}
+              />
+            )}
+          </div>
         </div>
       ))}
     </div>

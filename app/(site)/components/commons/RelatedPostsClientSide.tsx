@@ -23,7 +23,7 @@ export default function RelatedPostsClientSide({ post }: RelatedPostsProps) {
             {post.related_posts.map((related) => (
               <div
                 key={related.id}
-                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                className="group bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
               >
                 <Link href={`/${related.slug}.html`}>
                   <div className="relative aspect-video">
@@ -31,7 +31,7 @@ export default function RelatedPostsClientSide({ post }: RelatedPostsProps) {
                       src={related.image_url || "/img-default.jpg"}
                       alt={related.name}
                       fill
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                   <div className="p-3">

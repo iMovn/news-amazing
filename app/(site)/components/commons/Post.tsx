@@ -1,5 +1,4 @@
 // components/commons/Post.tsx
-// components/commons/Post.tsx
 "use client";
 
 import DOMPurify from "isomorphic-dompurify";
@@ -8,8 +7,6 @@ import { processContent } from "@/utils/contentProcessor";
 import { PostType } from "../types/PostRes";
 import RelatedPostsClientSide from "./RelatedPostsClientSide";
 import { useEffect, useRef, useState, useCallback } from "react";
-import PostImage from "./PostImage";
-import { createRoot } from "react-dom/client";
 
 interface PostProps {
   post: PostType;
@@ -49,175 +46,40 @@ export default function Post({ post }: PostProps) {
         frameborder="0" 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
         allowfullscreen
-        style="position: absolute; top: 0; left: 0;"
+        referrerpolicy="strict-origin-when-cross-origin"
+        
       ></iframe>
     `;
   }, []);
 
   // Thiết lập event listeners và xử lý nội dung sau khi render
   useEffect(() => {
-    // Bảo vệ trường hợp contentRef chưa gắn với DOM
-    if (!contentRef.current) return;
+    const currentContentRef = contentRef.current;
+    if (!currentContentRef) return;
 
-    // Đánh dấu bắt đầu xử lý nội dung (để hiển thị loading state)
     setIsContentReady(false);
 
-    // Hàm thay thế các placeholder bằng component PostImage
-    const replacePostImagePlaceholders = () => {
-      // Tìm tất cả các elements có attribute data-post-image
-      const placeholders =
-        contentRef.current?.querySelectorAll("[data-post-image]");
-
-      // Xử lý từng placeholder
-      placeholders?.forEach((placeholder) => {
-        // Lấy dữ liệu từ placeholder
-        const src = placeholder.getAttribute("data-src") || "";
-        const alt = placeholder.getAttribute("data-alt") || "";
-        const width = parseInt(
-          placeholder.getAttribute("data-width") || "800",
-          10
-        );
-        const height = parseInt(
-          placeholder.getAttribute("data-height") || "600",
-          10
-        );
-        const className = placeholder.getAttribute("data-class") || "";
-
-        // Tạo div container
-        const container = document.createElement("div");
-        container.className = `post-image-container ${className}`;
-        // Thay thế placeholder bằng container
-        placeholder.parentNode?.replaceChild(container, placeholder);
-
-        // Sử dụng createRoot để render React component vào DOM
-        // Đây là cách mới để render React components vào DOM (React 18+)
-        try {
-          // Tạo root cho container
-          const root = createRoot(container);
-          // Render PostImage component vào container
-          root.render(
-            <PostImage
-              src={src}
-              alt={alt}
-              width={width}
-              height={height}
-              className="w-full"
-              priority={true} // Các hình ảnh được đánh dấu là quan trọng
-            />
-          );
-        } catch (error) {
-          console.error("Error rendering PostImage component:", error);
-
-          // Fallback nếu có lỗi rendering React component
-          // Sử dụng HTML thuần thay vì React component
-          container.innerHTML = `
-            <div class="relative overflow-hidden" style="aspect-ratio: ${width}/${height}">
-              <div class="absolute inset-0 bg-gray-200 animate-pulse"></div>
-              <img 
-                src="${src}" 
-                alt="${alt}" 
-                width="${width}" 
-                height="${height}" 
-                class="w-full h-auto object-cover opacity-0 transition-opacity duration-300"
-                onload="this.classList.add('opacity-100'); this.previousElementSibling.classList.add('opacity-0');"
-                onerror="this.src='/img-default.jpg'; this.classList.add('opacity-100');"
-                loading="lazy"
-              />
-            </div>
-          `;
-        }
+    const observer = new MutationObserver(() => {
+      const videoContainers =
+        currentContentRef.querySelectorAll(".video-container");
+      videoContainers.forEach((container) => {
+        container.addEventListener("click", handleVideoContainerClick);
       });
-    };
-
-    // Thêm event listeners cho video containers
-    // Tìm tất cả các container video trong nội dung
-    const videoContainers =
-      contentRef.current.querySelectorAll(".video-container");
-    // Gắn event listener cho mỗi container
-    videoContainers.forEach((container) => {
-      container.addEventListener("click", handleVideoContainerClick);
     });
 
-    // Xử lý lazy-loading cho hình ảnh bằng Intersection Observer API
-    const setupImageObserver = () => {
-      // Tạo một Intersection Observer để theo dõi khi nào hình ảnh vào viewport
-      const imageObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              // Khi hình ảnh vào viewport, thêm class loaded
-              const img = entry.target as HTMLImageElement;
-              img.classList.add("loaded");
+    observer.observe(currentContentRef, { childList: true, subtree: true });
 
-              // Xóa placeholder khi hình ảnh đã load xong
-              const wrapper = img.closest(".image-wrapper");
-              const placeholder = wrapper?.querySelector(".image-placeholder");
-              if (placeholder && img.complete) {
-                placeholder.classList.add("fade-out");
-                setTimeout(() => {
-                  placeholder.remove();
-                }, 300);
-              }
-
-              // Ngừng theo dõi khi đã xử lý
-              imageObserver.unobserve(img);
-            }
-          });
-        },
-        {
-          rootMargin: "100px", // Bắt đầu load khi gần viewport 100px
-          threshold: 0.01, // Chỉ cần 1% hình ảnh hiển thị trong viewport
-        }
-      );
-
-      // Đăng ký observer cho tất cả hình ảnh có class content-image
-      const images = contentRef.current?.querySelectorAll(".content-image");
-      images?.forEach((img) => {
-        imageObserver.observe(img);
-
-        // Xử lý sự kiện khi hình ảnh đã load xong
-        (img as HTMLImageElement).onload = () => {
-          img.classList.add("loaded");
-
-          // Xóa placeholder
-          const wrapper = img.closest(".image-wrapper");
-          const placeholder = wrapper?.querySelector(".image-placeholder");
-          if (placeholder) {
-            placeholder.classList.add("fade-out");
-            setTimeout(() => {
-              placeholder?.remove();
-            }, 300);
-          }
-        };
-
-        // Xử lý lỗi hình ảnh - thay bằng hình mặc định
-        (img as HTMLImageElement).onerror = () => {
-          (img as HTMLImageElement).src = "/img-default.jpg";
-          img.classList.add("loaded");
-        };
-      });
-
-      return imageObserver;
-    };
-
-    // Thực hiện các thao tác DOM
-    replacePostImagePlaceholders();
-    const imageObserver = setupImageObserver();
-
-    // Đánh dấu đã xử lý nội dung - cho phép hiển thị nội dung
     setIsContentReady(true);
 
-    // Cleanup function - chạy khi component unmount hoặc dependencies thay đổi
     return () => {
-      // Xóa event listeners để tránh memory leak
-      videoContainers.forEach((container) => {
+      observer.disconnect();
+      const videoContainers =
+        currentContentRef.querySelectorAll(".video-container");
+      videoContainers?.forEach((container) => {
         container.removeEventListener("click", handleVideoContainerClick);
       });
-
-      // Ngắt kết nối observer để tránh memory leak
-      imageObserver.disconnect();
     };
-  }, [optimizedContent, handleVideoContainerClick]); // Thêm handleVideoContainerClick vào dependencies
+  }, [optimizedContent, handleVideoContainerClick]);
 
   // Thêm styles global cho component - chỉ chạy một lần sau khi mount
   useEffect(() => {
@@ -277,36 +139,3 @@ export default function Post({ post }: PostProps) {
     </div>
   );
 }
-
-// "use client";
-
-// import DOMPurify from "isomorphic-dompurify";
-// import { insertTocToContent } from "@/utils/insertToc";
-// import { PostType } from "../types/PostRes";
-// import RelatedPostsClientSide from "./RelatedPostsClientSide"; // Import component CSR
-
-// interface PostProps {
-//   post: PostType;
-// }
-
-// export default function Post({ post }: PostProps) {
-//   // Kiểm tra nếu post.content và post.toc tồn tại trước khi sử dụng
-//   const contentWithToc = post.content
-//     ? insertTocToContent(post.content, post.toc || "")
-//     : "";
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Nội dung bài viết */}
-//       <div
-//         className="content_post prose max-w-none text-justify"
-//         dangerouslySetInnerHTML={{
-//           __html: DOMPurify.sanitize(contentWithToc),
-//         }}
-//       />
-
-//       {/* Sử dụng component RelatedPostsClientSide để lấy bài viết liên quan từ client-side */}
-//       <RelatedPostsClientSide post={post} />
-//     </div>
-//   );
-// }
