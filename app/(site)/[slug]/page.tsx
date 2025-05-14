@@ -145,6 +145,7 @@ export default async function SlugPage({
     );
   }
 
+  // Danh mục
   const categoryData = await fetchCategoryBySlug(slug, page);
   if (!categoryData?.items?.data) return notFound();
 

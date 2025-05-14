@@ -6,7 +6,7 @@ import DOMPurify from "isomorphic-dompurify";
 
 import { useEffect, useState } from "react";
 import { CalendarDays } from "lucide-react";
-import { CategoryDetail } from "../types/CategoryRes";
+import { PostType } from "../types/PostRes";
 
 function PostImage({ src, alt }: { src: string; alt: string }) {
   const [imgSrc, setImgSrc] = useState(src || "/img-default.jpg");
@@ -31,7 +31,7 @@ export default function PostCard({
   posts,
   categoryName,
 }: {
-  posts: CategoryDetail[];
+  posts: PostType[];
   categoryName: string;
 }) {
   const [mounted, setMounted] = useState(false);
@@ -40,7 +40,7 @@ export default function PostCard({
     setMounted(true);
   }, []);
 
-  if (!posts || posts.length === 0) {
+  if (!Array.isArray(posts) || posts.length === 0) {
     return (
       <p>
         Danh mục <strong>{categoryName}</strong> chưa có bài viết nào. Hãy thêm
