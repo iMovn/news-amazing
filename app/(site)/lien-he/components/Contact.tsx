@@ -186,53 +186,61 @@ export default function Contact() {
           </p>
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                {...register("name")}
-                placeholder="Họ và tên..."
-                className="border p-2 text-sm rounded-md outline-none w-full"
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
-              <input
-                type="text"
-                {...register("phone")}
-                placeholder="Số điện thoại"
-                className="border p-2 text-sm rounded-md outline-none w-full"
-              />
-              {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.phone.message}
-                </p>
-              )}
+              <div>
+                <input
+                  type="text"
+                  {...register("name")}
+                  placeholder="Họ và tên..."
+                  className="border p-2 text-sm rounded-md outline-none w-full"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  {...register("phone")}
+                  placeholder="Số điện thoại"
+                  className="border p-2 text-sm rounded-md outline-none w-full"
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.phone.message}
+                  </p>
+                )}
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-              <input
-                type="email"
-                {...register("email")}
-                placeholder="Địa chỉ email..."
+              <div>
+                <input
+                  type="email"
+                  {...register("email")}
+                  placeholder="Địa chỉ email..."
+                  className="border p-2 text-sm rounded-md outline-none w-full"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <textarea
+                rows={5}
+                {...register("message")}
+                placeholder="Nội dung..."
                 className="border p-2 text-sm rounded-md outline-none w-full"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
+              {errors.message && (
+                <p className="text-red-500 text-sm !mt-0">
+                  {errors.message.message}
                 </p>
               )}
             </div>
-            <textarea
-              rows={5}
-              {...register("message")}
-              placeholder="Nội dung..."
-              className="border p-2 text-sm rounded-md outline-none w-full"
-            />
-            {errors.message && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.message.message}
-              </p>
-            )}
             <button
               type="submit"
               className="text-sm bg-primary_layout hover:bg-lime-600 text-white px-6 py-2 rounded-sm font-medium focus-visible:none"
