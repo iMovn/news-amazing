@@ -2,6 +2,7 @@
 
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const teamMembers = [
   {
@@ -53,21 +54,46 @@ const teamMembers = [
 export default function TeamWork() {
   return (
     <section className="container my-12">
-      <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
-        TEAM <span className="text-primary_layout">Work</span>
-      </h2>
-      <div className="relative flex justify-center mb-9">
-        <Image
-          src={"/images/divide.jpg"}
-          alt="divi"
-          width={506}
-          height={506}
-          loading="lazy"
-          quality={100}
-          className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
-        />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+      >
+        <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
+          ĐỘI NGŨ <span className="text-primary_layout">HEPF</span>
+        </h2>
+        <div className="relative flex justify-center mb-9">
+          <Image
+            src={"/images/divide.jpg"}
+            alt="divi"
+            width={506}
+            height={506}
+            loading="lazy"
+            quality={100}
+            className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
+          />
+        </div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
         {teamMembers.map((member, index) => (
           <div
             key={index}
@@ -117,7 +143,7 @@ export default function TeamWork() {
             </div>
           </div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

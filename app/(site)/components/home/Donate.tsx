@@ -4,6 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useState } from "react";
 import { postContact } from "../api/formContact";
+import { fadeIn } from "../commons/VariantsMotion";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface ContactFormData {
   name: string;
@@ -24,7 +28,7 @@ const schema = yup.object().shape({
     .required("Vui lòng nhập số điện thoại"),
   message: yup.string().trim().required("Vui lòng nhập nội dung"),
 });
-
+const domainUrl = process.env.NEXT_PUBLIC_URL;
 export default function Donate() {
   const {
     register,
@@ -73,7 +77,13 @@ export default function Donate() {
       <div className="absolute inset-0 bg-black md:bg-opacity-40 bg-opacity-10 z-0"></div>
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 md:gap-32 gap-12 items-center">
         {/* Left Column */}
-        <div className="text-white z-10">
+        <motion.div
+          variants={fadeIn("right", 0.1)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="text-white z-10"
+        >
           <h2 className="text-2xl font-extrabold mb-4">
             Our Company is An End-to-End Mid stream At
           </h2>
@@ -81,13 +91,28 @@ export default function Donate() {
             Lorem ipsum dolor sit amet, consectetur adipiscing varius diam ac
             ipsuelit ut Nulla convallis neque
           </p>
-          <button className="text-base mt-3 px-6 py-2 border-[1px] border-white font-semibold rounded-sm hover:bg-white hover:text-gray-600 transition">
-            Get a Quote
-          </button>
-        </div>
+          <Button
+            asChild
+            variant="outline"
+            className="text-base mt-3 px-6 py-2 border-[1px] border-white font-semibold rounded-sm hover:bg-white hover:text-gray-600 transition"
+          >
+            <Link
+              href={`${domainUrl}/lien-he`}
+              className="flex items-center justify-center"
+            >
+              Liên Hệ HEPF
+            </Link>
+          </Button>
+        </motion.div>
 
         {/* Right Column - Form */}
-        <div className="bg-white md:p-10 p-5 rounded-md shadow-md z-10">
+        <motion.div
+          variants={fadeIn("left", 0.1)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="bg-white md:p-10 p-5 rounded-md shadow-md z-10"
+        >
           <h3 className="text-2xl font-extrabold text-gray-700 mb-2">
             Đăng ký tư vấn
           </h3>
@@ -186,7 +211,7 @@ export default function Donate() {
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

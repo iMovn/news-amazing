@@ -6,6 +6,7 @@ import TopBar from "./TopBar";
 import Image from "next/image";
 import Logo from "@/public/hepfu-logo.png";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID;
@@ -37,17 +38,23 @@ export default function Header() {
       <TopBar />
       <div className="container mx-auto flex justify-between items-center py-3 px-4">
         {/* Logo */}
-        <Link href="/">
-          <Image
-            src={logoUrl || Logo}
-            width={280}
-            height={65}
-            alt="logo-hepfu"
-            quality={100}
-            loading="lazy"
-            className="md:w-72 w-auto h-auto"
-          />
-        </Link>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <Link href="/">
+            <Image
+              src={logoUrl || Logo}
+              width={280}
+              height={65}
+              alt="logo-hepfu"
+              quality={100}
+              loading="lazy"
+              className="md:w-72 w-auto h-auto"
+            />
+          </Link>
+        </motion.div>
         {/* Menu Desktop */}
         <DesktopNav />
         {/* Menu Mobile */}

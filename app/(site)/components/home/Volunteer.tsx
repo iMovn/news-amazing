@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCountUp } from "react-countup";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 interface StatItem {
   id: string;
@@ -41,6 +42,8 @@ const itemVolunteer: StatItem[] = [
 interface StatCardProps {
   item: StatItem;
 }
+
+const domainUrl = process.env.NEXT_PUBLIC_URL;
 
 const StatCard: React.FC<StatCardProps> = ({ item }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -94,7 +97,19 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
 const Volunteer: React.FC = () => {
   return (
     <section className="w-full max-w-6xl mx-auto md:pt-24 py-8 px-4">
-      <div className="text-center mb-6">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.2,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+        className="text-center mb-6"
+      >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2">
           EVERY DAY 99+{" "}
           <span className="text-primary_layout uppercase">VOLUNTEERS</span>
@@ -110,20 +125,44 @@ const Volunteer: React.FC = () => {
             className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
           />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:mt-12">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.3,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+        className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:mt-12"
+      >
         {itemVolunteer.map((item) => (
           <StatCard key={item.id} item={item} />
         ))}
-      </div>
+      </motion.div>
 
-      <div className="text-center text-gray-600 mt-12 max-w-3xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+        className="text-center text-gray-600 mt-12 max-w-3xl mx-auto"
+      >
         <p className="md:text-base text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
           venenatis in eros etiaculis. Vivamus volutpat hendrerit elementum.
         </p>
-      </div>
+      </motion.div>
 
       <div className="flex justify-center mt-8">
         <motion.button
@@ -131,20 +170,25 @@ const Volunteer: React.FC = () => {
           whileTap={{ scale: 0.95 }}
           className="bg-primary_layout md:text-sm text-xs text-white md:px-7 px-3 py-2 flex rounded-md items-center font-bold"
         >
-          Xem chi tiết
-          <svg
-            className="md:w-5 w-4 md:h-5 h-4 ml-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <Link
+            href={`${domainUrl}/lien-he`}
+            className="flex items-center justify-center"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+            Xem chi tiết
+            <svg
+              className="md:w-5 w-4 md:h-5 h-4 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
         </motion.button>
       </div>
     </section>

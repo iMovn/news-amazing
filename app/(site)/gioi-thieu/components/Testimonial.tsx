@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Quote } from "lucide-react";
+import { motion } from "framer-motion";
 
 const testimonials = [
   {
@@ -45,11 +46,35 @@ export default function Testimonial() {
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4">
-        <h2 className="md:text-3xl text-xl font-extrabold mb-12 text-center uppercase">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+            transition: {
+              delay: 0.5,
+              duration: 0.5,
+            },
+          }}
+          viewport={{ once: false }}
+          className="md:text-3xl text-xl font-extrabold mb-12 text-center uppercase"
+        >
           Đối tác nói gì <span className="text-primary_layout">về HEPF</span>
-        </h2>
+        </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+            transition: {
+              delay: 0.5,
+              duration: 0.5,
+            },
+          }}
+          viewport={{ once: false }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
           {testimonials.map((item, index) => (
             <div
               key={index}
@@ -68,7 +93,7 @@ export default function Testimonial() {
               <p className="text-sm text-gray-500">{item.job}</p>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

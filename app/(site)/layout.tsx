@@ -16,7 +16,7 @@ export default function SiteLayout({
         shadow="0 0 10px #2299DD,0 0 5px #2299DD"
       />
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow overflow-x-hidden">{children}</main>
       <Footer />
     </div>
   );

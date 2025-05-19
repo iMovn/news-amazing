@@ -6,6 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Image from "next/image";
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 const partners = [
   { id: 1, name: "3docean", logo: "/partners/partner1.jpg" },
@@ -30,21 +31,46 @@ const Partner = () => {
   }, []);
   return (
     <section className="mt-6 mb-16 bg-white">
-      <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
-        Đối tác <span className="text-primary_layout">HEPF</span>
-      </h2>
-      <div className="relative flex justify-center mb-9">
-        <Image
-          src={"/images/divide.jpg"}
-          alt="divi"
-          width={506}
-          height={506}
-          loading="lazy"
-          quality={100}
-          className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
-        />
-      </div>
-      <div className="max-w-6xl mx-auto relative">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+      >
+        <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
+          Đối tác <span className="text-primary_layout">HEPF</span>
+        </h2>
+        <div className="relative flex justify-center mb-9">
+          <Image
+            src={"/images/divide.jpg"}
+            alt="divi"
+            width={506}
+            height={506}
+            loading="lazy"
+            quality={100}
+            className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
+          />
+        </div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+        className="max-w-6xl mx-auto relative"
+      >
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={10}
@@ -83,7 +109,7 @@ const Partner = () => {
         {/* Custom Navigation Buttons */}
         <button className="partner-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 text-primary_layout hover:text-hover_layout transition-all" />
         <button className="partner-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 text-primary_layout hover:text-hover_layout transition-all" />
-      </div>
+      </motion.div>
     </section>
   );
 };

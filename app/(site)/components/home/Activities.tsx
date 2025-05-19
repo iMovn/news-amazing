@@ -1,5 +1,8 @@
+"use client";
 import Image from "next/image";
 import ShapeDivider from "./ShapeDivider";
+import { motion } from "framer-motion";
+import { fadeIn } from "../commons/VariantsMotion";
 
 const options = [
   { icon: "/icon/icon1.png", title: "Hỗ Trợ Tài Chính" },
@@ -25,16 +28,28 @@ export default function Activities() {
 
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-[30%,70%] items-center md:gap-10 gap-7 relative z-10">
           {/* Left Title */}
-          <h2 className="text-xl md:text-4xl font-extrabold">
-            <span className="text-primary_layout uppercase text-base">
-              HEPF - Quỹ bảo vệ môi trường
-            </span>
-            <br />
-            Công Tác Nghiệp Vụ
-          </h2>
-
+          <motion.div
+            variants={fadeIn("right", 0.1)}
+            initial="hidden"
+            whileInView={"show"}
+            viewport={{ once: false, amount: 0.2 }}
+          >
+            <h2 className="text-xl md:text-4xl font-extrabold">
+              <span className="text-primary_layout uppercase text-base">
+                HEPF - Quỹ bảo vệ môi trường
+              </span>
+              <br />
+              Công Tác Nghiệp Vụ
+            </h2>
+          </motion.div>
           {/* Right Options */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-6 gap-3">
+          <motion.div
+            variants={fadeIn("left", 0.1)}
+            initial="hidden"
+            whileInView={"show"}
+            viewport={{ once: false, amount: 0.2 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-6 gap-3"
+          >
             {options.map((item, index) => (
               <div key={index} className="flex items-center gap-4">
                 {/* Icon Container */}
@@ -53,7 +68,7 @@ export default function Activities() {
                 </span>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
       <ShapeDivider />

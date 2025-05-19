@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import { ChevronRight } from "lucide-react";
@@ -5,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import fetchCategoryEvent from "../api/home/event";
 import DOMPurify from "isomorphic-dompurify";
+import { motion } from "framer-motion";
 
 interface Event {
   id: number;
@@ -31,21 +33,46 @@ export default async function EventSection() {
 
   return (
     <div className="mx-auto md:w-[1000px] md:mt-12 mt-10 px-4">
-      <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
-        Văn bản <span className="text-primary_layout uppercase">pháp lý</span>
-      </h2>
-      <div className="relative flex justify-center mb-9">
-        <Image
-          src={"/images/divide.jpg"}
-          alt="divi"
-          width={506}
-          height={506}
-          loading="lazy"
-          quality={100}
-          className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
-        />
-      </div>
-      <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+      >
+        <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
+          Văn bản <span className="text-primary_layout uppercase">pháp lý</span>
+        </h2>
+        <div className="relative flex justify-center mb-9">
+          <Image
+            src={"/images/divide.jpg"}
+            alt="divi"
+            width={506}
+            height={506}
+            loading="lazy"
+            quality={100}
+            className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
+          />
+        </div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+        className="space-y-6"
+      >
         {events.map((item: Event) => {
           const { day, month } = formatDate(item.created_at);
           return (
@@ -81,7 +108,7 @@ export default async function EventSection() {
             </Link>
           );
         })}
-      </div>
+      </motion.div>
       <div className="text-center">
         <Button
           asChild

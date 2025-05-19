@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { fadeIn } from "../commons/VariantsMotion";
 
 const features = [
   {
@@ -40,12 +42,30 @@ export default function Features() {
     <section className="container mx-auto md:-mt-5">
       <div className="grid grid-cols-1 md:grid-cols-3 md:gap-8 gap-2 items-center">
         {/* Left Column */}
-        <div className="__left_mobile">
+        <motion.div
+          variants={fadeIn("right", 0.3)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="__left_mobile"
+        >
           <FeatureList items={features.slice(0, 3)} align="right" />
-        </div>
+        </motion.div>
 
         {/* Center Background */}
-        <div className="hidden md:flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+            transition: {
+              delay: 0.2,
+              duration: 0.5,
+            },
+          }}
+          viewport={{ once: false }}
+          className="hidden md:flex items-center justify-center"
+        >
           <Image
             src="/images/leaf.jpg"
             alt="Background Leaf"
@@ -55,10 +75,17 @@ export default function Features() {
             quality={100}
             className="object-cover"
           />
-        </div>
+        </motion.div>
 
         {/* Right Column */}
-        <FeatureList items={features.slice(3)} align="left" />
+        <motion.div
+          variants={fadeIn("left", 0.3)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+        >
+          <FeatureList items={features.slice(3)} align="left" />
+        </motion.div>
       </div>
     </section>
   );

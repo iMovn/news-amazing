@@ -2,6 +2,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useCountUp } from "react-countup";
 import { motion } from "framer-motion";
+import { fadeIn } from "../../components/commons/VariantsMotion";
 
 interface StatItem {
   id: string;
@@ -100,7 +101,13 @@ const VolunteerAbout: React.FC = () => {
       <div className="absolute inset-0 bg-black md:bg-opacity-40 bg-opacity-10 z-0"></div>
       <div className="relative z-10 container mx-auto px-4 grid grid-cols-1 md:grid-cols-[25%,75%] gap-12 items-center">
         {/* Left Column */}
-        <div className="text-white z-10 md:text-left text-center">
+        <motion.div
+          variants={fadeIn("right", 0.1)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="text-white z-10 md:text-left text-center"
+        >
           <h2 className="text-4xl font-extrabold mb-4">
             Recycle For All <br />
             <span className="text-primary_layout">Its Worth</span>
@@ -108,14 +115,20 @@ const VolunteerAbout: React.FC = () => {
           <button className="text-base mt-3 px-6 py-2 border-[1px] border-white font-semibold rounded-sm hover:bg-white hover:text-gray-600 transition">
             Get a Quote
           </button>
-        </div>
+        </motion.div>
 
         {/* Right Column - Form */}
-        <div className="md:p-10 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div
+          variants={fadeIn("left", 0.1)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="md:p-10 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
           {itemVolunteer.map((item) => (
             <StatCard key={item.id} item={item} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

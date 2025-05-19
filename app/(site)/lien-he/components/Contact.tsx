@@ -9,6 +9,8 @@ import { postContact } from "../../components/api/formContact";
 import { SettingsData } from "../../components/types/setting";
 import { fetchSiteSettings } from "../../components/api/settings";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { fadeIn } from "../../components/commons/VariantsMotion";
 
 interface ContactFormData {
   name: string;
@@ -84,27 +86,47 @@ export default function Contact() {
 
   return (
     <section className="container py-12 bg-white">
-      <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
-        Thông tin <span className="text-primary_layout">liên hệ</span>
-      </h2>
-      <div className="relative flex justify-center mb-4">
-        <Image
-          src={"/images/divide.jpg"}
-          alt="divi"
-          width={506}
-          height={506}
-          loading="lazy"
-          quality={100}
-          className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
-        />
-      </div>
-      <p className="text-base text-center mb-10 text-gray-600">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras venenatis
-        in eros etiaculis. Vivamus volutpat hendrerit elementum.
-      </p>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.5,
+            duration: 0.5,
+          },
+        }}
+        viewport={{ once: false }}
+      >
+        <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
+          Thông tin <span className="text-primary_layout">liên hệ</span>
+        </h2>
+        <div className="relative flex justify-center mb-4">
+          <Image
+            src={"/images/divide.jpg"}
+            alt="divi"
+            width={506}
+            height={506}
+            loading="lazy"
+            quality={100}
+            className="md:max-w-[90px] md:max-h-[90px] max-w-[80px] max-h-[80px]"
+          />
+        </div>
+
+        <p className="text-base text-center mb-10 text-gray-600">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
+          venenatis in eros etiaculis. Vivamus volutpat hendrerit elementum.
+        </p>
+      </motion.div>
       <div className="md:flex justify-center gap-16 items-start">
         {/* Left Contact Info */}
-        <div className="space-y-6">
+        <motion.div
+          variants={fadeIn("right", 0.1)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="space-y-6"
+        >
           {/* Hotline */}
           <div className="flex w-full gap-5">
             <div className="relative mt-2 flex items-center justify-center w-10 h-10">
@@ -173,10 +195,16 @@ export default function Contact() {
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Form */}
-        <div className="bg-[#F5F5F5] md:p-7 p-5 md:mt-0 mt-7 rounded-md shadow-md z-10">
+        <motion.div
+          variants={fadeIn("left", 0.1)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: false, amount: 0.2 }}
+          className="bg-[#F5F5F5] md:p-7 p-5 md:mt-0 mt-7 rounded-md shadow-md z-10"
+        >
           <h3 className="text-2xl font-extrabold text-gray-700 mb-2">
             Đăng Ký Tư Vấn
           </h3>
@@ -276,7 +304,7 @@ export default function Contact() {
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
