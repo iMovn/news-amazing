@@ -32,7 +32,7 @@ export default function Activities() {
             variants={fadeIn("right", 0.1)}
             initial="hidden"
             whileInView={"show"}
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
           >
             <h2 className="text-xl md:text-4xl font-extrabold">
               <span className="text-primary_layout uppercase text-base">
@@ -47,7 +47,7 @@ export default function Activities() {
             variants={fadeIn("left", 0.1)}
             initial="hidden"
             whileInView={"show"}
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-6 gap-3"
           >
             {options.map((item, index) => (

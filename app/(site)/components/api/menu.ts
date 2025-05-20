@@ -7,7 +7,8 @@ if (!API_BASE_URL) throw new Error("NEXT_PUBLIC_API_URL chưa được cấu hì
 export async function fetchMenu(): Promise<MenuItem[]> {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/site/menu?type=main&domain_id=${DOMAIN_ID}`
+      `${API_BASE_URL}/site/menu?type=main&domain_id=${DOMAIN_ID}`,
+      { next: { revalidate: 100 } }
     );
     if (!res.ok) throw new Error("Lỗi khi lấy menu");
 
@@ -22,7 +23,8 @@ export async function fetchMenu(): Promise<MenuItem[]> {
 export async function fetchMenuFt(): Promise<MenuItem[]> {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/site/menu?type=footer&domain_id=${DOMAIN_ID}`
+      `${API_BASE_URL}/site/menu?type=footer&domain_id=${DOMAIN_ID}`,
+      { next: { revalidate: 100 } }
     );
     if (!res.ok) throw new Error("Lỗi khi lấy menu footer");
 

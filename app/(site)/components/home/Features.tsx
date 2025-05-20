@@ -46,7 +46,7 @@ export default function Features() {
           variants={fadeIn("right", 0.3)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="__left_mobile"
         >
           <FeatureList items={features.slice(0, 3)} align="right" />
@@ -63,7 +63,7 @@ export default function Features() {
               duration: 0.5,
             },
           }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           className="hidden md:flex items-center justify-center"
         >
           <Image
@@ -82,7 +82,7 @@ export default function Features() {
           variants={fadeIn("left", 0.3)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
         >
           <FeatureList items={features.slice(3)} align="left" />
         </motion.div>

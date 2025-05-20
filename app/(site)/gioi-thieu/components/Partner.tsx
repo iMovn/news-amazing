@@ -41,7 +41,7 @@ const Partner = () => {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
       >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
           Đối tác <span className="text-primary_layout">HEPF</span>
@@ -68,7 +68,7 @@ const Partner = () => {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="max-w-6xl mx-auto relative"
       >
         <Swiper

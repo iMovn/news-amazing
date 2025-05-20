@@ -43,7 +43,7 @@ export default async function EventSection() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
       >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
           Văn bản <span className="text-primary_layout uppercase">pháp lý</span>
@@ -70,7 +70,7 @@ export default async function EventSection() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="space-y-6"
       >
         {events.map((item: Event) => {

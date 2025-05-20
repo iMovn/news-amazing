@@ -26,7 +26,7 @@ export default async function PortfolioGrid() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
       >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
           Chương trình{" "}
@@ -57,7 +57,7 @@ export default async function PortfolioGrid() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="grid grid-cols-1 md:grid-cols-4 gap-4"
       >
         {portfolios.map((item: Portfolio) => (

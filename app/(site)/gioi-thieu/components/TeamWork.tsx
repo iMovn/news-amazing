@@ -64,7 +64,7 @@ export default function TeamWork() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
       >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
           ĐỘI NGŨ <span className="text-primary_layout">HEPF</span>
@@ -91,7 +91,7 @@ export default function TeamWork() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
       >
         {teamMembers.map((member, index) => (

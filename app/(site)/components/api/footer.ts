@@ -6,7 +6,7 @@ const DOMAIN_ID = process.env.NEXT_PUBLIC_DOMAIN_ID || "";
 export async function fetchNewsPostHome(): Promise<PostType[]> {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/site/posts?domain_id=${DOMAIN_ID}&limit=3`,
+      `${API_BASE_URL}/site/posts?domain_id=${DOMAIN_ID}&limit=4`,
       { next: { revalidate: 100 } }
     );
     if (!res.ok) throw new Error("Lỗi khi lấy bài viết mới nhất tại footer");

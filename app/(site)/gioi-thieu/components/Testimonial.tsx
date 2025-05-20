@@ -56,7 +56,7 @@ export default function Testimonial() {
               duration: 0.5,
             },
           }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           className="md:text-3xl text-xl font-extrabold mb-12 text-center uppercase"
         >
           Đối tác nói gì <span className="text-primary_layout">về HEPF</span>
@@ -72,7 +72,7 @@ export default function Testimonial() {
               duration: 0.5,
             },
           }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {testimonials.map((item, index) => (

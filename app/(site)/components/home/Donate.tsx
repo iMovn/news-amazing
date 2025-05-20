@@ -81,7 +81,7 @@ export default function Donate() {
           variants={fadeIn("right", 0.1)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="text-white z-10"
         >
           <h2 className="text-2xl font-extrabold mb-4">
@@ -110,7 +110,7 @@ export default function Donate() {
           variants={fadeIn("left", 0.1)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="bg-white md:p-10 p-5 rounded-md shadow-md z-10"
         >
           <h3 className="text-2xl font-extrabold text-gray-700 mb-2">

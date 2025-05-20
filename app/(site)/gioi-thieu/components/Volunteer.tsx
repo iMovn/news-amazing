@@ -105,7 +105,7 @@ const VolunteerAbout: React.FC = () => {
           variants={fadeIn("right", 0.1)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="text-white z-10 md:text-left text-center"
         >
           <h2 className="text-4xl font-extrabold mb-4">
@@ -122,7 +122,7 @@ const VolunteerAbout: React.FC = () => {
           variants={fadeIn("left", 0.1)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="md:p-10 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {itemVolunteer.map((item) => (

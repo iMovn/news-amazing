@@ -107,7 +107,7 @@ const Volunteer: React.FC = () => {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="text-center mb-6"
       >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2">
@@ -137,7 +137,7 @@ const Volunteer: React.FC = () => {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:mt-12"
       >
         {itemVolunteer.map((item) => (
@@ -155,7 +155,7 @@ const Volunteer: React.FC = () => {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="text-center text-gray-600 mt-12 max-w-3xl mx-auto"
       >
         <p className="md:text-base text-sm">

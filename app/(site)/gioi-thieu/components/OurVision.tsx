@@ -25,7 +25,7 @@ export default function OurVision() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         className="md:w-[60%] space-y-4"
       >
         <h2 className="text-xl md:text-2xl font-extrabold">OUR VISION</h2>
@@ -67,7 +67,7 @@ export default function OurVision() {
         variants={fadeIn("left", 0.1)}
         initial="hidden"
         whileInView={"show"}
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
         className="md:w-[40%] flex justify-center"
       >
         <Image

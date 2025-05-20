@@ -96,7 +96,7 @@ export default function Contact() {
             duration: 0.5,
           },
         }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
       >
         <h2 className="md:text-3xl text-xl font-extrabold mb-2 text-center uppercase">
           Thông tin <span className="text-primary_layout">liên hệ</span>
@@ -124,7 +124,7 @@ export default function Contact() {
           variants={fadeIn("right", 0.1)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="space-y-6"
         >
           {/* Hotline */}
@@ -202,7 +202,7 @@ export default function Contact() {
           variants={fadeIn("left", 0.1)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           className="bg-[#F5F5F5] md:p-7 p-5 md:mt-0 mt-7 rounded-md shadow-md z-10"
         >
           <h3 className="text-2xl font-extrabold text-gray-700 mb-2">
