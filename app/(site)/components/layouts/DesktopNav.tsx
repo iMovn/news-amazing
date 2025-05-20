@@ -5,8 +5,6 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { MenuItem } from "../types/MenuRes";
-import { motion } from "framer-motion";
-import { fadeIn } from "../commons/VariantsMotion";
 
 // Hàm đệ quy lọc menu có is_active: 1
 function filterActiveMenu(items: MenuItem[]): MenuItem[] {
@@ -164,14 +162,8 @@ export default function DesktopNav() {
   };
 
   return (
-    <motion.nav
-      variants={fadeIn("left", 0.1)}
-      initial="hidden"
-      whileInView={"show"}
-      viewport={{ once: true, amount: 0.2 }}
-      className="hidden md:flex gap-x-4 items-center uppercase font-nav_h_layout font-bold text-sm"
-    >
+    <nav className="hidden md:flex gap-x-4 items-center uppercase font-nav_h_layout font-bold text-sm">
       {renderMenu(menuItems)}
-    </motion.nav>
+    </nav>
   );
 }
